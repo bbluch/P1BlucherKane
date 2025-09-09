@@ -7,7 +7,5 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/student.jar"/>
-	<classpathentry kind="lib" path="C:/Users/bluch/Downloads/student.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ajkbu/Downloads/student.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
