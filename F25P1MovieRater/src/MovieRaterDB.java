@@ -7,7 +7,7 @@
  * @version Summer 2025
  *
  */
-// test
+// test comment
 public class MovieRaterDB implements MovieRater {
 
     // ----------------------------------------------------------
