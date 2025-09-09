@@ -5,6 +5,7 @@ import student.TestCase;
  * @author CS3114/5040 Staff
  * @version Summer 2025
  */
+// test
 public class MovieRaterTest extends TestCase {
 
     private MovieRaterDB it;
