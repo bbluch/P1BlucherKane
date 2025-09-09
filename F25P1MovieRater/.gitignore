@@ -26,6 +26,7 @@ hs_error_pid*
 *.lib
 *.exe
 *.app
+student.jar
 =======
 >>>>>>> branch 'master' of https://web-cat.cs.vt.edu/Web-CAT/WebObjects/Web-CAT.woa/git/StudentProject/61b3e214-0856-45a1-bf5d-4ea4af208547
 /bin/
