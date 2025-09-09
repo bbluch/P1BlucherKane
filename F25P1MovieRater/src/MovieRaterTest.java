@@ -7,7 +7,7 @@ import student.TestCase;
  */
 public class MovieRaterTest extends TestCase {
 
-    //private MovieRaterDB it;
+    private MovieRaterDB it;
     /**
      * Sets up the tests that follow. In general, used for initialization
      */
