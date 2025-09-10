@@ -12,25 +12,25 @@ public class MovieRaterTest extends TestCase {
     /**
      * Sets up the tests that follow. In general, used for initialization
      */
-    /*public void setUp() {
+    public void setUp() {
         it = new MovieRaterDB();
-    }*/
+    }
 
     /**
      * Test clearing on initial
      * @throws IOException
      */
-    /*public void testClearInit()
+    public void testClearInit()
         throws IOException
     {
         assertTrue(it.clear());
-    }*/
+    }
 
     /**
      * Test empty print movie or reviewer
      * @throws IOException
      */
-    /*public void testRefMissing()
+    public void testRefMissing()
         throws IOException
     {
         assertNull(it.listMovie(2));
@@ -38,14 +38,14 @@ public class MovieRaterTest extends TestCase {
         assertFalse(it.deleteScore(5, 1));
         assertFalse(it.deleteReviewer(2));
         assertFalse(it.deleteMovie(2));
-    }*/
+    }
 
 
     /**
      * Test insert two items and print
      * @throws IOException
      */
-    /*public void testRefinsertTwo()
+    public void testRefinsertTwo()
         throws IOException
     {
         assertTrue(it.addReview(2, 3, 7));
@@ -53,27 +53,27 @@ public class MovieRaterTest extends TestCase {
         assertFuzzyEquals(it.printRatings(), "2: (3, 7) (5, 5)");
         assertFuzzyEquals(it.listMovie(3), "3: 7");
         assertFuzzyEquals(it.listReviewer(2), "2: 7 5");
-    }*/
+    }
 
     /**
      * Test bad review values
      * @throws IOException
      */
-    /*public void testRefBadRatings()
+    public void testRefBadRatings()
         throws IOException
     {
         assertFalse(it.addReview(2, 3, -1));
         assertFalse(it.addReview(2, 4, 0));
         assertFalse(it.addReview(2, 5, 20));
         assertFuzzyEquals(it.printRatings(), "");
-    }*/
+    }
 
 
     /**
      * Test insert 5 items and print
      * @throws IOException
      */
-    /*public void testRefinsertFive()
+    public void testRefinsertFive()
         throws IOException
     {
         assertTrue(it.addReview(7, 3, 10));
@@ -88,5 +88,5 @@ public class MovieRaterTest extends TestCase {
                 "5: (7, 9)",
                 "7: (3, 10) (7, 1)"),
             it.printRatings());
-    }*/
+    }
 }
