@@ -48,7 +48,7 @@ public class SparseMatrix {
     }
     
     /**
-     * 
+     * SparseMatric constructor. Sets up outside headers
      */
     public SparseMatrix(int numRows, int numCols) {
         this.numRows = numRows;
@@ -57,13 +57,23 @@ public class SparseMatrix {
         rowHeader = new HeaderNode(0);
         // using a temp node to implement amount of rows, while the row header stays at the start of the list
         HeaderNode tempStart = rowHeader;
-        for(int i = 2; i < numRows; i++) {
+        for(int i = 1; i < numRows; i++) {
             HeaderNode newNode = new HeaderNode(i);
             tempStart.n = newNode;
-            tempStart = newNode;
-            
-            
+            tempStart = newNode;   
         }
+        
+        
+        colHeader = new HeaderNode(0);
+        // using same temp node to implement amount of cols, while the col header stays at the start of the list
+        tempStart = colHeader;
+        for(int i = 1; i < numCols; i++) {
+            HeaderNode newNode = new HeaderNode(i);
+            tempStart.n = newNode;
+            tempStart = newNode;   
+        }
+        
+        
     }
     
     
