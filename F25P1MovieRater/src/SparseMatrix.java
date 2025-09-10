@@ -25,7 +25,7 @@ public class SparseMatrix {
         Node(int row, int col, int val){
             this.row = row;
             this.col = col;
-            this.value = value;
+            this.value = val;
         }
         // no getters and setters needed. use node.row or node.left instead
     }
