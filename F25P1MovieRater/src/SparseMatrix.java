@@ -1,4 +1,12 @@
-
+/*
+ * // -------------------------------------------------------------------------
+ * /**
+ * The class containing the implementation of Sparse Matrix data structure.
+ * 
+ * @author benblucher, austink23
+ * 
+ * @version Sep 10, 2025
+ */
 public class SparseMatrix {
 
     private int numRows;
@@ -82,9 +90,9 @@ public class SparseMatrix {
 
     /**
      * 
-     * @param row
-     * @param col
-     * @param val
+     * @param row - row value (reviewer)
+     * @param col - column value (movie)
+     * @param val - review value (score)
      */
     public void insert(int row, int col, int val) {
         Node newNode = new Node(row, col, val);
