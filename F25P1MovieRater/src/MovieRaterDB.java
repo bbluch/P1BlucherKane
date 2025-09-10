@@ -99,7 +99,6 @@ public class MovieRaterDB implements MovieRater {
      */
     public String printRatings() {
         String returnString = "";
-        for (int i = 0; i < matrix.numRows; )
         return "";
     }
 
