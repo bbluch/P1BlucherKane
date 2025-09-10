@@ -95,9 +95,11 @@ public class MovieRaterDB implements MovieRater {
      * Dump out all the ratings. Each reviewer's rating should be in a
      * separate line (in ascending order by reviewer index), with
      * movie/score pairs listed in ascending order of movie index.
-     * @return String representing the listing, empty string if there are none
+     * @return returnString representing the listing, empty string if there are none
      */
     public String printRatings() {
+        String returnString = "";
+        for (int i = 0; i < matrix.numRows; )
         return "";
     }
 
