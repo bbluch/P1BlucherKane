@@ -79,6 +79,43 @@ public class SparseMatrix {
     
     /**
      * 
+     * @param row
+     * @param col
+     * @param val
+     */
+    public void insert(int row, int col, int val) {
+        Node newNode = new Node(row, col, val); 
+        
+        //find header node for the row
+        HeaderNode headRow = findRowHeader(row);
+        
+        //if there is no other node in that row OR
+        //if the first other node in the row is in a further column
+        if(headRow.nNode == null || headRow.nNode.col > col) {
+            //the new node becomes attached on the left to the first matrix node of the row
+            // headRow.nNode is null or another node further down the cols 
+            newNode.right = headRow.nNode; 
+            //if it is not the first entry in the row
+            if(headRow.nNode != null) {
+                headRow.nNode.left = newNode;
+            }
+            headRow.nNode = newNode;
+        }
+        // the node is either on the far right, or sandwiched between two existing nodes
+        else {
+           // a node used to track where the newNode goes
+           Node current = headRow.nNode; 
+        }
+           
+        
+    }
+    
+    
+    
+    
+    
+    /**
+     * 
      * @param row index of the row you are searching for
      * @return null or the header of the row you are searching for 
      */
