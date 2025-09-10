@@ -1,13 +1,11 @@
 
 public class SparseMatrix {
-    
-    
+
     private int numRows;
     private int numCols;
     private HeaderNode rowHeader;
     private HeaderNode colHeader;
-    
-    
+
     /**
      * node class for the values inside the orthogonal matrix
      * 
@@ -18,19 +16,19 @@ public class SparseMatrix {
         int col;
         int value;
         Node left;
-        Node right; 
+        Node right;
         Node up;
         Node down;
-        
-        Node(int row, int col, int val){
+
+        Node(int row, int col, int val) {
             this.row = row;
             this.col = col;
             this.value = val;
         }
         // no getters and setters needed. use node.row or node.left instead
     }
-    
-    
+
+
     /**
      * node class for the headers that store the ring of starting nodes
      * 
@@ -41,42 +39,47 @@ public class SparseMatrix {
         int index;
         HeaderNode n;
         Node nNode;
-        
-        HeaderNode(int index){
+
+        HeaderNode(int index) {
             this.index = index;
         }
     }
-    
+
     /**
      * SparseMatric constructor. Sets up outside headers
-     * @param numRows number of rows for header
-     * @param numCols number of cols for header
+     * 
+     * @param numRows
+     *            number of rows for header
+     * @param numCols
+     *            number of cols for header
      */
     public SparseMatrix(int numRows, int numCols) {
         this.numRows = numRows;
         this.numCols = numCols;
-        
+
         rowHeader = new HeaderNode(0);
-        // using a temp node to implement amount of rows, while the row header stays at the start of the list
+        // using a temp node to implement amount of rows, while the row header
+        // stays at the start of the list
         HeaderNode tempStart = rowHeader;
-        for(int i = 1; i < numRows; i++) {
+        for (int i = 1; i < numRows; i++) {
             HeaderNode newNode = new HeaderNode(i);
             tempStart.n = newNode;
-            tempStart = newNode;   
+            tempStart = newNode;
         }
-        
-        
+
         colHeader = new HeaderNode(0);
-        // using same temp node to implement amount of cols, while the col header stays at the start of the list
+        // using same temp node to implement amount of cols, while the col
+        // header stays at the start of the list
         tempStart = colHeader;
-        for(int i = 1; i < numCols; i++) {
+        for (int i = 1; i < numCols; i++) {
             HeaderNode newNode = new HeaderNode(i);
             tempStart.n = newNode;
-            tempStart = newNode;   
+            tempStart = newNode;
         }
-        
+
     }
-    
+
+
     /**
      * 
      * @param row
@@ -84,76 +87,66 @@ public class SparseMatrix {
      * @param val
      */
     public void insert(int row, int col, int val) {
-        Node newNode = new Node(row, col, val); 
-        
-        //find header node for the row
+        Node newNode = new Node(row, col, val);
+
+        // find header node for the row
         HeaderNode headRow = findRowHeader(row);
-        
-        //if there is no other node in that row OR
-        //if the first other node in the row is in a further column
-        if(headRow.nNode == null || headRow.nNode.col > col) {
-            //the new node becomes attached on the left to the first matrix node of the row
-            // headRow.nNode is null or another node further down the cols 
-            newNode.right = headRow.nNode; 
-            //if it is not the first entry in the row
-            if(headRow.nNode != null) {
+
+        // if there is no other node in that row OR
+        // if the first other node in the row is in a further column
+        if (headRow.nNode == null || headRow.nNode.col > col) {
+            // the new node becomes attached on the left to the first matrix
+            // node of the row
+            // headRow.nNode is null or another node further down the cols
+            newNode.right = headRow.nNode;
+            // if it is not the first entry in the row
+            if (headRow.nNode != null) {
                 headRow.nNode.left = newNode;
             }
             headRow.nNode = newNode;
         }
-        // the node is either on the far right, or sandwiched between two existing nodes
+        // the node is either on the far right, or sandwiched between two
+        // existing nodes
         else {
-           // a node used to track where the newNode goes
-           Node current = headRow.nNode; 
+            // a node used to track where the newNode goes
+            Node current = headRow.nNode;
         }
-           
-        
+
     }
-    
-    
-    
-    
-    
+
+
     /**
      * 
-     * @param row index of the row you are searching for
-     * @return null or the header of the row you are searching for 
+     * @param row
+     *            index of the row you are searching for
+     * @return null or the header of the row you are searching for
      */
     private HeaderNode findRowHeader(int row) {
         HeaderNode checker = rowHeader.n;
-        
-        while(checker != null && checker.index != row) {
-            checker = checker.n;            
+
+        while (checker != null && checker.index != row) {
+            checker = checker.n;
         }
         return checker;
-        
+
     }
-    
+
+
     /**
      * 
-     * @param col index of the row you are searching for
-     * @return HeaderNode - null or the header node of the row you are searching for 
+     * @param col
+     *            index of the row you are searching for
+     * @return HeaderNode - null or the header node of the row you are searching
+     *         for
      */
     private HeaderNode findColHeader(int col) {
         HeaderNode checker = colHeader.n;
-        
-        while(checker != null && checker.index != col) {
-            checker = checker.n;            
+
+        while (checker != null && checker.index != col) {
+            checker = checker.n;
         }
         return checker;
-        
+
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
