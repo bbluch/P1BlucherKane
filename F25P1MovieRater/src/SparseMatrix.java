@@ -27,6 +27,7 @@ public class SparseMatrix {
             this.col = col;
             this.value = value;
         }
+        
     }
     
     
@@ -54,11 +55,12 @@ public class SparseMatrix {
         this.numCols = numCols;
         
         rowHeader = new HeaderNode(0);
-        HeaderNode tempStart = new HeaderNode(1);
+        // using a temp node to implement amount of rows, while the row header stays at the start of the list
+        HeaderNode tempStart = rowHeader;
         for(int i = 2; i < numRows; i++) {
             HeaderNode newNode = new HeaderNode(i);
             tempStart.n = newNode;
-            newNode = tempStart;
+            tempStart = newNode;
             
             
         }
