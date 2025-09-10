@@ -27,7 +27,7 @@ public class SparseMatrix {
             this.col = col;
             this.value = value;
         }
-        
+        // no getters and setters needed. use node.row or node.left instead
     }
     
     
@@ -49,6 +49,8 @@ public class SparseMatrix {
     
     /**
      * SparseMatric constructor. Sets up outside headers
+     * @param numRows number of rows for header
+     * @param numCols number of cols for header
      */
     public SparseMatrix(int numRows, int numCols) {
         this.numRows = numRows;
@@ -73,8 +75,38 @@ public class SparseMatrix {
             tempStart = newNode;   
         }
         
+    }
+    
+    /**
+     * 
+     * @param row index of the row you are searching for
+     * @return null or the header of the row you are searching for 
+     */
+    private HeaderNode findRowHeader(int row) {
+        HeaderNode checker = rowHeader.n;
+        
+        while(checker != null && checker.index != row) {
+            checker = checker.n;            
+        }
+        return checker;
         
     }
+    
+    /**
+     * 
+     * @param col index of the row you are searching for
+     * @return HeaderNode - null or the header node of the row you are searching for 
+     */
+    private HeaderNode findColHeader(int col) {
+        HeaderNode checker = colHeader.n;
+        
+        while(checker != null && checker.index != col) {
+            checker = checker.n;            
+        }
+        return checker;
+        
+    }
+
     
     
     
