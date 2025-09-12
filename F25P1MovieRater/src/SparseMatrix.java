@@ -87,40 +87,79 @@ public class SparseMatrix {
 
 
     /**
-     * 
-     * @param row
-     *            - row value (reviewer)
-     * @param col
-     *            - column value (movie)
-     * @param val
-     *            - review value (score)
+     * Inserts a value at the specified row and column. If a node already
+     * exists at this position, its value is updated.
+     *
+     * @param row - row value (reviewer)
+     * @param col - column value (movie)
+     * @param val - review value (score)
      */
     public void insert(int row, int col, int val) {
         Node newNode = new Node(row, col, val);
 
-        // find header node for the row
+        // --- HORIZONTAL (ROW) INSERTION ---
         HeaderNode headRow = findRowHeader(row);
+        Node currentRow = headRow.nNode;
+        Node prevRow = null;
 
-        // if there is no other node in that row OR
-        // if the first other node in the row is in a further column
-        if (headRow.nNode == null || headRow.nNode.col > col) {
-            // the new node becomes attached on the left to the first matrix
-            // node of the row
-            // headRow.nNode is null or another node further down the cols
-            newNode.right = headRow.nNode;
-            // if it is not the first entry in the row
-            if (headRow.nNode != null) {
-                headRow.nNode.left = newNode;
-            }
-            headRow.nNode = newNode;
+        // --- CHANGE 1 START ---
+        // Traverse the row to find the correct position for the new node.
+        // The original code only checked the first node. This loop finds the
+        // correct position for insertion or finds an existing node to update.
+        while (currentRow != null && currentRow.col < col) {
+            prevRow = currentRow;
+            currentRow = currentRow.right;
         }
-        // the node is either on the far right, or sandwiched between two
-        // existing nodes
+
+        // If a node for this movie already exists, just update the score.
+        if (currentRow != null && currentRow.col == col) {
+            currentRow.value = val;
+            return; // The node is updated, so we are done.
+        }
+        // --- CHANGE 1 END ---
+
+        // Insert the new node into the row list
+        newNode.left = prevRow;
+        newNode.right = currentRow;
+        if (prevRow != null) {
+            prevRow.right = newNode;
+        }
         else {
-            // a node used to track where the newNode goes
-            Node current = headRow.nNode;
+            headRow.nNode = newNode; // New first node for this row
+        }
+        if (currentRow != null) {
+            currentRow.left = newNode;
         }
 
+
+        // --- CHANGE 2 START ---
+        // --- VERTICAL (COLUMN) INSERTION ---
+        // The original method was missing this entire section. To conform to
+        // the orthogonal list representation, each node must also be linked
+        // vertically within its column.
+        HeaderNode headCol = findColHeader(col);
+        Node currentCol = headCol.nNode;
+        Node prevCol = null;
+
+        // Traverse the column to find the correct position for the new node
+        while (currentCol != null && currentCol.row < row) {
+            prevCol = currentCol;
+            currentCol = currentCol.down;
+        }
+
+        // Insert the new node into the column list
+        newNode.up = prevCol;
+        newNode.down = currentCol;
+        if (prevCol != null) {
+            prevCol.down = newNode;
+        }
+        else {
+            headCol.nNode = newNode; // New first node for this column
+        }
+        if (currentCol != null) {
+            currentCol.up = newNode;
+        }
+        // --- CHANGE 2 END ---
     }
     
 
