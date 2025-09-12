@@ -218,6 +218,38 @@ public class SparseMatrix {
         return f_string;
     }
     
+    /**
+     * 
+     * @return String of all values in matrix, "" if null
+     */
+    public String matrixList() {
+        String f_string = "";
+        
+        if(numRows == 0 || numCols == 0) {
+            return "";
+        }
+        
+        if(rowHeader == null || colHeader == null) {
+            return "";
+        }
+        
+        HeaderNode tempRowHeader = rowHeader;
+        Node currentRow = rowHeader.nNode;
+        
+        while(tempRowHeader != null) {
+            f_string = f_string + tempRowHeader.index + ":";
+            while(currentRow != null) {
+                f_string = f_string + " (" + currentRow.col + ", " + currentRow.value + ")";
+                currentRow = currentRow.right;
+            }
+            f_string = f_string + "/n";
+            tempRowHeader = tempRowHeader.n;
+            currentRow = tempRowHeader.nNode;
+        }
+        
+        return f_string;
+    }
+    
     
     
 

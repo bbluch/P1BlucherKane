@@ -27,6 +27,7 @@ public class MovieRaterDB implements MovieRater {
      * @return true on clear
      */
     public boolean clear() {
+        matrix = new SparseMatrix(1000, 1000);
         return true;
     }
 
