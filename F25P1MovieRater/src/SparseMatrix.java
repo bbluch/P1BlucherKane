@@ -181,7 +181,7 @@ public class SparseMatrix {
 
 
     /**
-     * 
+     * Helper file
      * @param col
      *            index of the row you are searching for
      * @return HeaderNode - null or the header node of the row you are searching
