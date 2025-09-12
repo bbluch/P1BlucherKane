@@ -466,5 +466,16 @@ Here is the improved `insert` method with the changes highlighted and explained.
 
 ### Summary of Changes:
 
-1.  **Complete Row Traversal and Update Logic:** Your original `else` block was empty. I've replaced it with a `while` loop that traverses the row's linked list to find the correct insertion point. [cite\_start]This ensures that new ratings are always kept in ascending order by movie index, as required[cite: 441, 459]. [cite\_start]It also now handles the case where a review for a given movie by a specific reviewer already exists, in which case it simply updates the score[cite: 441].
-2.  **Added Vertical (Column) Linking:** The most significant addition is the entire second half of the method. Your original code did not link the new nodes vertically. The new code finds the correct column header and inserts the new node into the column's linked list, maintaining ascending order by reviewer index. [cite\_start]This is essential for the orthogonal list implementation specified in the project description and will allow you to efficiently retrieve all ratings for a given movie[cite: 447, 467].
+1.  **Complete Row Traversal and Update Logic:** Your original `else` block 
+was empty. I've replaced it with a `while` loop that traverses the row's linked
+ list to find the correct insertion point. [cite\_start]This ensures that new 
+ ratings are always kept in ascending order by movie index, as required[cite: 441, 459].
+  [cite\_start]It also now handles the case where a review for a given movie by a specific
+   reviewer already exists, in which case it simply updates the score[cite: 441].
+2.  **Added Vertical (Column) Linking:** The most significant addition is the 
+entire second half of the method. Your original code did not link the new nodes
+ vertically. The new code finds the correct column header and inserts the new node 
+ into the column's linked list, maintaining ascending order by reviewer index. 
+ [cite\_start]This is essential for the orthogonal list implementation specified 
+ in the project description and will allow you to efficiently retrieve all ratings 
+ for a given movie[cite: 447, 467].
