@@ -128,7 +128,7 @@ public class MovieRaterDB implements MovieRater {
      * @return String representing the listing, null if no such reviewer
      */
     public String listReviewer(int reviewer) {
-        return "";
+        return matrix.rowList(reviewer);
     }
 
 
@@ -142,7 +142,7 @@ public class MovieRaterDB implements MovieRater {
      * @return String representing the listing, null if no such movie
      */
     public String listMovie(int movie) {
-        return "";
+        return matrix.colList(movie);
     }
 
 

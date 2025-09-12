@@ -102,7 +102,6 @@ public class SparseMatrix {
         Node currentRow = headRow.nNode;
         Node prevRow = null;
 
-        // --- CHANGE 1 START ---
         // Traverse the row to find the correct position for the new node.
         // The original code only checked the first node. This loop finds the
         // correct position for insertion or finds an existing node to update.
@@ -116,7 +115,6 @@ public class SparseMatrix {
             currentRow.value = val;
             return; // The node is updated, so we are done.
         }
-        // --- CHANGE 1 END ---
 
         // Insert the new node into the row list
         newNode.left = prevRow;
@@ -132,7 +130,6 @@ public class SparseMatrix {
         }
 
 
-        // --- CHANGE 2 START ---
         // --- VERTICAL (COLUMN) INSERTION ---
         // The original method was missing this entire section. To conform to
         // the orthogonal list representation, each node must also be linked
@@ -159,8 +156,69 @@ public class SparseMatrix {
         if (currentCol != null) {
             currentCol.up = newNode;
         }
-        // --- CHANGE 2 END ---
     }
+    
+    /**
+     * 
+     * @param col column you want to list
+     * @return String of values in column
+     */
+    public String colList(int col) {
+        
+        String f_string = "";
+        HeaderNode colNode = findColHeader(col);
+        if(colNode == null) {
+            return null;
+        }
+        
+        f_string = colNode.index + f_string;
+        f_string = f_string + ":";
+        
+        Node current = colNode.nNode;
+        
+        if(current == null) {
+            return "";
+        }
+        
+        while(current != null) {
+            f_string = f_string + " " + current.value;
+            current = current.down;
+        }
+        
+        return f_string;
+    }
+    
+    /**
+     * 
+     * @param row you want to list
+     * @return String of values in row
+     */
+    public String rowList(int row) {
+        
+        String f_string = "";
+        HeaderNode rowNode = findRowHeader(row);
+        if(rowNode == null) {
+            return null;
+        }
+        
+        f_string = rowNode.index + f_string;
+        f_string = f_string + ":";
+        
+        Node current = rowNode.nNode;
+        
+        if(current == null) {
+            return "";
+        }
+        
+        while(current != null) {
+            f_string = f_string + " " + current.value;
+            current = current.right;
+        }
+        
+        return f_string;
+    }
+    
+    
     
 
     /**
