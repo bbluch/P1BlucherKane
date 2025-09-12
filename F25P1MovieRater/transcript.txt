@@ -299,3 +299,172 @@ Insert keeps both row and column lists ordered.
 This mirrors the orthogonal list structure in the picture exactly.
 
 Do you want me to also implement a delete(row, col) so the list updates in both directions (unlinking from row & column simultaneously)?
+
+
+
+/**
+
+*
+
+* @param row
+
+* - row value (reviewer)
+
+* @param col
+
+* - column value (movie)
+
+* @param val
+
+* - review value (score)
+
+*/
+
+public void insert(int row, int col, int val) {
+
+Node newNode = new Node(row, col, val);
+
+
+
+// find header node for the row
+
+HeaderNode headRow = findRowHeader(row);
+
+
+
+// if there is no other node in that row OR
+
+// if the first other node in the row is in a further column
+
+if (headRow.nNode == null || headRow.nNode.col > col) {
+
+// the new node becomes attached on the left to the first matrix
+
+// node of the row
+
+// headRow.nNode is null or another node further down the cols
+
+newNode.right = headRow.nNode;
+
+// if it is not the first entry in the row
+
+if (headRow.nNode != null) {
+
+headRow.nNode.left = newNode;
+
+}
+
+headRow.nNode = newNode;
+
+}
+
+// the node is either on the far right, or sandwiched between two
+
+// existing nodes
+
+else {
+
+// a node used to track where the newNode goes
+
+Node current = headRow.nNode;
+
+}
+
+
+
+} using this insert method we wrote, update it to improve it with the project 
+specifications, while highlighting the specific changes made
+
+
+Of course. I have updated your `insert` method to be fully functional according
+ to the project specifications. Your original method correctly handled inserting
+  a new rating at the beginning of a row, but it was missing the logic to insert
+   a rating in the middle or at the end of a row, update an existing rating, and
+    link the ratings vertically in columns.
+
+Here is the improved `insert` method with the changes highlighted and explained.
+
+### Improved `insert` Method
+
+```java
+    /**
+     * Inserts a value at the specified row and column. If a node already
+     * exists at this position, its value is updated.
+     *
+     * @param row - row value (reviewer)
+     * @param col - column value (movie)
+     * @param val - review value (score)
+     */
+    public void insert(int row, int col, int val) {
+        Node newNode = new Node(row, col, val);
+
+        // --- HORIZONTAL (ROW) INSERTION ---
+        HeaderNode headRow = findRowHeader(row);
+        Node currentRow = headRow.nNode;
+        Node prevRow = null;
+
+        // --- CHANGE 1 START ---
+        // Traverse the row to find the correct position for the new node.
+        // The original code only checked the first node. This loop finds the
+        // correct position for insertion or finds an existing node to update.
+        while (currentRow != null && currentRow.col < col) {
+            prevRow = currentRow;
+            currentRow = currentRow.right;
+        }
+
+        // If a node for this movie already exists, just update the score.
+        if (currentRow != null && currentRow.col == col) {
+            currentRow.value = val;
+            return; // The node is updated, so we are done.
+        }
+        // --- CHANGE 1 END ---
+
+        // Insert the new node into the row list
+        newNode.left = prevRow;
+        newNode.right = currentRow;
+        if (prevRow != null) {
+            prevRow.right = newNode;
+        }
+        else {
+            headRow.nNode = newNode; // New first node for this row
+        }
+        if (currentRow != null) {
+            currentRow.left = newNode;
+        }
+
+
+        // --- CHANGE 2 START ---
+        // --- VERTICAL (COLUMN) INSERTION ---
+        // The original method was missing this entire section. To conform to
+        // the orthogonal list representation, each node must also be linked
+        // vertically within its column.
+        HeaderNode headCol = findColHeader(col);
+        Node currentCol = headCol.nNode;
+        Node prevCol = null;
+
+        // Traverse the column to find the correct position for the new node
+        while (currentCol != null && currentCol.row < row) {
+            prevCol = currentCol;
+            currentCol = currentCol.down;
+        }
+
+        // Insert the new node into the column list
+        newNode.up = prevCol;
+        newNode.down = currentCol;
+        if (prevCol != null) {
+            prevCol.down = newNode;
+        }
+        else {
+            headCol.nNode = newNode; // New first node for this column
+        }
+        if (currentCol != null) {
+            currentCol.up = newNode;
+        }
+        // --- CHANGE 2 END ---
+    }
+```
+
+### Summary of Changes:
+
+1.  **Complete Row Traversal and Update Logic:** Your original `else` block was empty. I've replaced it with a `while` loop that traverses the row's linked list to find the correct insertion point. [cite\_start]This ensures that new ratings are always kept in ascending order by movie index, as required[cite: 441, 459]. [cite\_start]It also now handles the case where a review for a given movie by a specific reviewer already exists, in which case it simply updates the score[cite: 441].
+2.  **Added Vertical (Column) Linking:** The most significant addition is the entire second half of the method. Your original code did not link the new nodes vertically. The new code finds the correct column header and inserts the new node into the column's linked list, maintaining ascending order by reviewer index. [cite\_start]This is essential for the orthogonal list implementation specified in the project description and will allow you to efficiently retrieve all ratings for a given movie[cite: 447, 467].
