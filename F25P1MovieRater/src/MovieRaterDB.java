@@ -1,4 +1,4 @@
-//-------------------------------------------------------------------------
+// -------------------------------------------------------------------------
 /**
  * Implementation for the MovieRater. This is a thin shell over
  * the sparse matrix class that does the work.
@@ -16,11 +16,14 @@ public class MovieRaterDB implements MovieRater {
      * Create a new MovieRaterDB object.
      */
     MovieRaterDB() {
+        matrix = new SparseMatrix(1000, 1000);
     }
+
 
     // ----------------------------------------------------------
     /**
      * (Re)initialize the database
+     * 
      * @return true on clear
      */
     public boolean clear() {
@@ -33,11 +36,14 @@ public class MovieRaterDB implements MovieRater {
      * Add a score to the database. If there already is a score for this
      * reviewer and movie pair, then update it.
      *
-     * @param reviewer The reviewer giving the rating
-     *   (must be a positive integer)
-     * @param movie The movie being rated
-     *   (must be a positive integer)
-     * @param score The rating score (1-10)
+     * @param reviewer
+     *            The reviewer giving the rating
+     *            (must be a positive integer)
+     * @param movie
+     *            The movie being rated
+     *            (must be a positive integer)
+     * @param score
+     *            The rating score (1-10)
      * @return True if the review was successfully added.
      *         False otherwise (for bad input values)
      */
@@ -53,7 +59,9 @@ public class MovieRaterDB implements MovieRater {
     // ----------------------------------------------------------
     /**
      * Delete the specified reviewer. This will delete all associated ratings.
-     * @param reviewer The reviewer to delete
+     * 
+     * @param reviewer
+     *            The reviewer to delete
      *
      * @return True if the reviewer was successfully deleted.
      *         False if no such reviewer in the database.
@@ -66,7 +74,9 @@ public class MovieRaterDB implements MovieRater {
     // ----------------------------------------------------------
     /**
      * Delete the specified movie. This will delete all associated ratings.
-     * @param movie The movie to delete
+     * 
+     * @param movie
+     *            The movie to delete
      *
      * @return True if the movie was successfully deleted.
      *         False if no such movie in the database.
@@ -79,8 +89,11 @@ public class MovieRaterDB implements MovieRater {
     // ----------------------------------------------------------
     /**
      * Delete the specified score.
-     * @param reviewer The reviewer of the score to delete
-     * @param movie The movie of the score to delete
+     * 
+     * @param reviewer
+     *            The reviewer of the score to delete
+     * @param movie
+     *            The movie of the score to delete
      *
      * @return True if the score was successfully deleted.
      *         False if no such score in the database.
@@ -95,7 +108,9 @@ public class MovieRaterDB implements MovieRater {
      * Dump out all the ratings. Each reviewer's rating should be in a
      * separate line (in ascending order by reviewer index), with
      * movie/score pairs listed in ascending order of movie index.
-     * @return returnString representing the listing, empty string if there are none
+     * 
+     * @return returnString representing the listing, empty string if there are
+     *         none
      */
     public String printRatings() {
         String returnString = "";
@@ -107,7 +122,9 @@ public class MovieRaterDB implements MovieRater {
     /**
      * List all ratings for a given reviewer, with scores listed in
      * ascending order of movie index.
-     * @param reviewer The reviewer to list ratings for
+     * 
+     * @param reviewer
+     *            The reviewer to list ratings for
      * @return String representing the listing, null if no such reviewer
      */
     public String listReviewer(int reviewer) {
@@ -119,7 +136,9 @@ public class MovieRaterDB implements MovieRater {
     /**
      * List all ratings for a given movie, with scores listed in
      * ascending order of reviewer index.
-     * @param movie The movie to list ratings for
+     * 
+     * @param movie
+     *            The movie to list ratings for
      * @return String representing the listing, null if no such movie
      */
     public String listMovie(int movie) {
@@ -130,10 +149,12 @@ public class MovieRaterDB implements MovieRater {
     // ----------------------------------------------------------
     /**
      * Return the index for the movie most similar to the specified one.
-     * @param movie the movie to find match for.
+     * 
+     * @param movie
+     *            the movie to find match for.
      * @return The best matching index.
      *         Return -1 if this movie does not exist or if there is no
-     *           suitable match
+     *         suitable match
      */
     public int similarMovie(int movie) {
         return -1;
@@ -143,10 +164,12 @@ public class MovieRaterDB implements MovieRater {
     // ----------------------------------------------------------
     /**
      * Return the index for the reviewer most similar to the specified one.
-     * @param reviewer the reviewer to find match for.
+     * 
+     * @param reviewer
+     *            the reviewer to find match for.
      * @return The best matching index.
      *         Return -1 if this reviewer does not exist or if there is no
-     *           suitable match
+     *         suitable match
      */
     public int similarReviewer(int reviewer) {
         return -1;
