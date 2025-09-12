@@ -1,2 +1,301 @@
 Transcript File for this Project:
 
+the class is a 2d sparse matrix. I want to use two orthogonal arrays to represent the data
+ChatGPT said:
+
+Nice choice 👍 A 2D sparse matrix with orthogonal linked structure is a classic data structure.
+Since you said "two orthogonal arrays," I think you want to build something like the cross-linked list representation (row headers and column headers, both pointing into the nonzero nodes).
+
+Here’s a clean Java skeleton to get you started:
+
+🔹 SparseMatrix.java
+package com.myproject.structures;
+
+/**
+ * SparseMatrix implemented with orthogonal linked lists.
+ * Each non-zero element is stored in a Node, which is linked
+ * both horizontally (across its row) and vertically (down its column).
+ */
+public class SparseMatrix {
+    private int rows;
+    private int cols;
+    private Node[] rowHeaders;   // Array of row header nodes
+    private Node[] colHeaders;   // Array of column header nodes
+
+    // 🔹 Node class for each non-zero element
+    private static class Node {
+        int row;
+        int col;
+        int value;
+        Node right;  // next element in the row
+        Node down;   // next element in the column
+
+        Node(int row, int col, int value) {
+            this.row = row;
+            this.col = col;
+            this.value = value;
+            this.right = null;
+            this.down = null;
+        }
+    }
+
+    // 🔹 Constructor
+    public SparseMatrix(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+        rowHeaders = new Node[rows];
+        colHeaders = new Node[cols];
+    }
+
+    // 🔹 Insert a non-zero element
+    public void insert(int row, int col, int value) {
+        if (value == 0) return; // ignore zeros
+
+        Node newNode = new Node(row, col, value);
+
+        // Insert into row list
+        if (rowHeaders[row] == null || rowHeaders[row].col > col) {
+            newNode.right = rowHeaders[row];
+            rowHeaders[row] = newNode;
+        } else {
+            Node current = rowHeaders[row];
+            while (current.right != null && current.right.col < col) {
+                current = current.right;
+            }
+            newNode.right = current.right;
+            current.right = newNode;
+        }
+
+        // Insert into column list
+        if (colHeaders[col] == null || colHeaders[col].row > row) {
+            newNode.down = colHeaders[col];
+            colHeaders[col] = newNode;
+        } else {
+            Node current = colHeaders[col];
+            while (current.down != null && current.down.row < row) {
+                current = current.down;
+            }
+            newNode.down = current.down;
+            current.down = newNode;
+        }
+    }
+
+    // 🔹 Get value at (row, col)
+    public int get(int row, int col) {
+        Node current = rowHeaders[row];
+        while (current != null && current.col <= col) {
+            if (current.col == col) {
+                return current.value;
+            }
+            current = current.right;
+        }
+        return 0; // default for sparse entries
+    }
+
+    // 🔹 Print matrix (for debugging)
+    public void printMatrix() {
+        for (int i = 0; i < rows; i++) {
+            Node current = rowHeaders[i];
+            for (int j = 0; j < cols; j++) {
+                if (current != null && current.col == j) {
+                    System.out.print(current.value + " ");
+                    current = current.right;
+                } else {
+                    System.out.print("0 ");
+                }
+            }
+            System.out.println();
+        }
+    }
+}
+
+
+✅ Features included in this skeleton:
+
+Internal Node class with row/col/value + orthogonal links.
+
+Row header array and column header array.
+
+insert() maintains sorted order in both row and column.
+
+get() retrieves values efficiently.
+
+printMatrix() for debugging.
+
+Do you want me to also add deletion of elements (removing a nonzero back to zero), or just keep insertion & retrieval for now?
+
+use this picture to organize the code
+(** picture of orthogonal list representation of a sparse matrix from the class notes on 15.1 **)
+ChatGPT said:
+
+Perfect 🙌 thanks for sharing that diagram. That figure shows the canonical orthogonal list sparse matrix (also called a cross-linked list):
+
+Row header nodes in a linked list across the top.
+
+Column header nodes in a linked list down the left.
+
+Each nonzero element has four links (right, left, up, down).
+
+Row headers link to the first nonzero element in that row.
+
+Column headers link to the first nonzero element in that column.
+
+Both row and column header lists are themselves circular or NULL-terminated depending on implementation.
+
+I’ll restructure the Java code to mirror this picture:
+
+🔹 SparseMatrix.java
+package com.myproject.structures;
+
+/**
+ * Orthogonal List Sparse Matrix Representation
+ * Inspired by classic cross-linked structure diagrams.
+ */
+public class SparseMatrix {
+    private int rows;
+    private int cols;
+    private HeaderNode rowHead; // linked list of row headers
+    private HeaderNode colHead; // linked list of column headers
+
+    // 🔹 Node for nonzero element
+    private static class MatrixNode {
+        int row, col, value;
+        MatrixNode right, left, up, down;
+
+        MatrixNode(int r, int c, int v) {
+            this.row = r;
+            this.col = c;
+            this.value = v;
+        }
+    }
+
+    // 🔹 Header node (for row/col headers)
+    private static class HeaderNode {
+        int index;              // row index OR column index
+        HeaderNode next;        // next header in the linked list
+        MatrixNode first;       // first nonzero in this row/col
+
+        HeaderNode(int index) {
+            this.index = index;
+        }
+    }
+
+    // 🔹 Constructor
+    public SparseMatrix(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+
+        // build row header list
+        rowHead = new HeaderNode(-1); // dummy head
+        HeaderNode prev = rowHead;
+        for (int i = 0; i < rows; i++) {
+            HeaderNode node = new HeaderNode(i);
+            prev.next = node;
+            prev = node;
+        }
+
+        // build col header list
+        colHead = new HeaderNode(-1); // dummy head
+        prev = colHead;
+        for (int j = 0; j < cols; j++) {
+            HeaderNode node = new HeaderNode(j);
+            prev.next = node;
+            prev = node;
+        }
+    }
+
+    // 🔹 Insert a value
+    public void insert(int row, int col, int value) {
+        if (value == 0) return;
+        MatrixNode newNode = new MatrixNode(row, col, value);
+
+        // ---- Row insertion ----
+        HeaderNode rHead = findRowHeader(row);
+        if (rHead.first == null || rHead.first.col > col) {
+            newNode.right = rHead.first;
+            if (rHead.first != null) rHead.first.left = newNode;
+            rHead.first = newNode;
+        } else {
+            MatrixNode current = rHead.first;
+            while (current.right != null && current.right.col < col) {
+                current = current.right;
+            }
+            newNode.right = current.right;
+            if (current.right != null) current.right.left = newNode;
+            current.right = newNode;
+            newNode.left = current;
+        }
+
+        // ---- Column insertion ----
+        HeaderNode cHead = findColHeader(col);
+        if (cHead.first == null || cHead.first.row > row) {
+            newNode.down = cHead.first;
+            if (cHead.first != null) cHead.first.up = newNode;
+            cHead.first = newNode;
+        } else {
+            MatrixNode current = cHead.first;
+            while (current.down != null && current.down.row < row) {
+                current = current.down;
+            }
+            newNode.down = current.down;
+            if (current.down != null) current.down.up = newNode;
+            current.down = newNode;
+            newNode.up = current;
+        }
+    }
+
+    // 🔹 Retrieve value
+    public int get(int row, int col) {
+        HeaderNode rHead = findRowHeader(row);
+        MatrixNode current = rHead.first;
+        while (current != null && current.col <= col) {
+            if (current.col == col) return current.value;
+            current = current.right;
+        }
+        return 0;
+    }
+
+    // 🔹 Print matrix
+    public void printMatrix() {
+        for (int i = 0; i < rows; i++) {
+            HeaderNode rHead = findRowHeader(i);
+            MatrixNode current = rHead.first;
+            for (int j = 0; j < cols; j++) {
+                if (current != null && current.col == j) {
+                    System.out.print(current.value + " ");
+                    current = current.right;
+                } else {
+                    System.out.print("0 ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    // --- Helpers ---
+    private HeaderNode findRowHeader(int row) {
+        HeaderNode h = rowHead.next;
+        while (h != null && h.index != row) h = h.next;
+        return h;
+    }
+
+    private HeaderNode findColHeader(int col) {
+        HeaderNode h = colHead.next;
+        while (h != null && h.index != col) h = h.next;
+        return h;
+    }
+}
+
+✅ How this matches your diagram:
+
+Row headers (left) are a linked list of HeaderNode.
+
+Column headers (top) are another linked list of HeaderNode.
+
+Each nonzero cell (MatrixNode) has 4 links (left/right/up/down).
+
+Insert keeps both row and column lists ordered.
+
+This mirrors the orthogonal list structure in the picture exactly.
+
+Do you want me to also implement a delete(row, col) so the list updates in both directions (unlinking from row & column simultaneously)?
