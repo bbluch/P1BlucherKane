@@ -71,8 +71,10 @@ public class MovieRaterTest extends TestCase {
 
     /**
      * Test bad reviewer value/movie values
+     * 
+     * @throws IOException
      */
-    public void testBadReviewerMovieRatings() {
+    public void testBadReviewerMovieRatings() throws IOException {
         assertFalse(it.addReview(0, 3, 3));
         assertFalse(it.addReview(-1, 3, 4));
         assertFalse(it.addReview(1, 0, 3));
@@ -99,8 +101,10 @@ public class MovieRaterTest extends TestCase {
 
     /**
      * Tests clear with values inserted
+     * 
+     * @throws IOException
      */
-    public void testClear() {
+    public void testClear() throws IOException {
         assertTrue(it.addReview(7, 3, 10));
         assertTrue(it.addReview(2, 3, 7));
         assertTrue(it.addReview(3, 5, 8));
@@ -114,8 +118,10 @@ public class MovieRaterTest extends TestCase {
 
     /**
      * Tests the implementation of inserting at end of list
+     * 
+     * @throws IOException
      */
-    public void testInsertAtEndOfList() {
+    public void testInsertAtEndOfList() throws IOException {
         assertTrue(it.addReview(1, 1, 5));
         assertTrue(it.addReview(1, 10, 8));
         assertFuzzyEquals(it.listReviewer(1), "1: 5 8");
@@ -124,8 +130,10 @@ public class MovieRaterTest extends TestCase {
 
     /**
      * Tests the implementation of inserting at middle of list
+     * 
+     * @throws IOException
      */
-    public void testInsertAtMiddleOfList() {
+    public void testInsertAtMiddleOfList() throws IOException {
         assertTrue(it.addReview(2, 1, 5));
         assertTrue(it.addReview(2, 10, 8));
         assertTrue(it.addReview(2, 5, 7));
@@ -135,8 +143,10 @@ public class MovieRaterTest extends TestCase {
 
     /**
      * Tests the implementation of inserting at beginning of list
+     * 
+     * @throws IOException
      */
-    public void testInsertAtBeginningOfList() {
+    public void testInsertAtBeginningOfList() throws IOException {
         assertTrue(it.addReview(3, 10, 3));
         assertTrue(it.addReview(3, 1, 7));
         assertFuzzyEquals(it.listReviewer(3), "3: 7 3");
@@ -145,8 +155,10 @@ public class MovieRaterTest extends TestCase {
 
     /**
      * Tests the implementation of inserting then updating
+     * 
+     * @throws IOException
      */
-    public void testInsertUpdate() {
+    public void testInsertUpdate() throws IOException {
         assertTrue(it.addReview(2, 1, 5));
         assertFuzzyEquals(it.listReviewer(2), "2: 5");
         assertTrue(it.addReview(2, 1, 8));
@@ -156,8 +168,10 @@ public class MovieRaterTest extends TestCase {
 
     /**
      * Tests correct behavior for when a list does not exist
+     * 
+     * @throws IOException
      */
-    public void testNonExistentList() {
+    public void testNonExistentList() throws IOException {
         assertNull(it.listReviewer(7));
         assertNull(it.listMovie(6));
     }
@@ -165,16 +179,20 @@ public class MovieRaterTest extends TestCase {
 
     /**
      * Tests printing an empty matrix
+     * 
+     * @throws IOException
      */
-    public void testPrintEmpty() {
+    public void testPrintEmpty() throws IOException {
         assertEquals("", it.printRatings());
     }
 
 
     /**
+     * Tests inserting
      * 
+     * @throws IOException
      */
-    public void testInsertOneItem() {
+    public void testInsertOneItem() throws IOException {
         assertTrue(it.addReview(2, 1, 5));
         assertFuzzyEquals(it.listReviewer(2), "2: 5");
     }
