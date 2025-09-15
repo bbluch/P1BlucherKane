@@ -110,12 +110,10 @@ public class MovieRaterDB implements MovieRater {
      * separate line (in ascending order by reviewer index), with
      * movie/score pairs listed in ascending order of movie index.
      * 
-     * @return returnString representing the listing, empty string if there are
-     *         none
+     * @return the string returned by the matrixList function
      */
     public String printRatings() {
-        String returnString = "";
-        return "";
+        return matrix.matrixList();
     }
 
 

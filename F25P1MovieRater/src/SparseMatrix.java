@@ -181,7 +181,7 @@ public class SparseMatrix {
         Node current = colNode.nNode;
 
         if (current == null) {
-            return "";
+            return null;
         }
 
         while (current != null) {
@@ -213,7 +213,7 @@ public class SparseMatrix {
         Node current = rowNode.nNode;
 
         if (current == null) {
-            return "";
+            return null;
         }
 
         while (current != null) {
@@ -241,21 +241,24 @@ public class SparseMatrix {
         }
 
         HeaderNode tempRowHeader = rowHeader;
-        Node currentRow = rowHeader.nNode;
+        // Node currentRow = rowHeader.nNode;
 
         while (tempRowHeader != null) {
-            fString = fString + tempRowHeader.index + ":";
-            while (currentRow != null) {
-                fString = fString + " (" + currentRow.col + ", "
-                    + currentRow.value + ")";
-                currentRow = currentRow.right;
+            Node currentRow = rowHeader.nNode;
+            if (currentRow != null) {
+                fString = fString + tempRowHeader.index + ":";
+                while (currentRow != null) {
+                    fString = fString + " (" + currentRow.col + ", "
+                        + currentRow.value + ")";
+                    currentRow = currentRow.right;
+                }
+                fString = fString + "\n";
             }
-            fString = fString + "/n";
             tempRowHeader = tempRowHeader.n;
-            currentRow = tempRowHeader.nNode;
+            // currentRow = tempRowHeader.nNode;
         }
 
-        return fString;
+        return fString.trim();
     }
 
 
@@ -266,7 +269,7 @@ public class SparseMatrix {
      * @return null or the header of the row you are searching for
      */
     private HeaderNode findRowHeader(int row) {
-        HeaderNode checker = rowHeader.n;
+        HeaderNode checker = rowHeader;
 
         while (checker != null && checker.index != row) {
             checker = checker.n;
@@ -285,7 +288,7 @@ public class SparseMatrix {
      *         for
      */
     private HeaderNode findColHeader(int col) {
-        HeaderNode checker = colHeader.n;
+        HeaderNode checker = colHeader;
 
         while (checker != null && checker.index != col) {
             checker = checker.n;
