@@ -169,14 +169,14 @@ public class SparseMatrix {
      */
     public String colList(int col) {
 
-        String f_string = "";
+        String fString = "";
         HeaderNode colNode = findColHeader(col);
         if (colNode == null) {
             return null;
         }
 
-        f_string = colNode.index + f_string;
-        f_string = f_string + ":";
+        fString = colNode.index + fString;
+        fString = fString + ":";
 
         Node current = colNode.nNode;
 
@@ -185,11 +185,11 @@ public class SparseMatrix {
         }
 
         while (current != null) {
-            f_string = f_string + " " + current.value;
+            fString = fString + " " + current.value;
             current = current.down;
         }
 
-        return f_string;
+        return fString;
     }
 
 
