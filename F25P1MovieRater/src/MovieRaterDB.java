@@ -50,7 +50,7 @@ public class MovieRaterDB implements MovieRater {
      */
     public boolean addReview(int reviewer, int movie, int score) {
         // Scores must be in the range 1 to 10.
-        if (reviewer < 0 || movie < 0 || score < 1 || score > 10)
+        if (reviewer < 1 || movie < 1 || score < 1 || score > 10)
             return false;
         matrix.insert(reviewer, movie, score);
         return true;
