@@ -244,7 +244,7 @@ public class SparseMatrix {
         // Node currentRow = rowHeader.nNode;
 
         while (tempRowHeader != null) {
-            Node currentRow = rowHeader.nNode;
+            Node currentRow = tempRowHeader.nNode;
             if (currentRow != null) {
                 fString = fString + tempRowHeader.index + ":";
                 while (currentRow != null) {
@@ -269,7 +269,7 @@ public class SparseMatrix {
      * @return null or the header of the row you are searching for
      */
     private HeaderNode findRowHeader(int row) {
-        HeaderNode checker = rowHeader;
+        HeaderNode checker = rowHeader.n;
 
         while (checker != null && checker.index != row) {
             checker = checker.n;
@@ -288,7 +288,7 @@ public class SparseMatrix {
      *         for
      */
     private HeaderNode findColHeader(int col) {
-        HeaderNode checker = colHeader;
+        HeaderNode checker = colHeader.n;
 
         while (checker != null && checker.index != col) {
             checker = checker.n;
