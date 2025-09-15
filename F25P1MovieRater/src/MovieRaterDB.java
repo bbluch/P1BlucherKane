@@ -68,7 +68,7 @@ public class MovieRaterDB implements MovieRater {
      *         False if no such reviewer in the database.
      */
     public boolean deleteReviewer(int reviewer) {
-        return true;
+        return matrix.removeRow(reviewer);
     }
 
 
@@ -83,7 +83,7 @@ public class MovieRaterDB implements MovieRater {
      *         False if no such movie in the database.
      */
     public boolean deleteMovie(int movie) {
-        return true;
+        return matrix.removeCol(movie);
     }
 
 
@@ -100,7 +100,7 @@ public class MovieRaterDB implements MovieRater {
      *         False if no such score in the database.
      */
     public boolean deleteScore(int reviewer, int movie) {
-        return true;
+        return matrix.remove(reviewer, movie);
     }
 
 

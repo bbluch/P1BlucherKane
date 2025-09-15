@@ -479,3 +479,160 @@ entire second half of the method. Your original code did not link the new nodes
  [cite\_start]This is essential for the orthogonal list implementation specified 
  in the project description and will allow you to efficiently retrieve all ratings 
  for a given movie[cite: 447, 467].
+ 
+ Could you write methods implemented in SparseMatrix to accomplish the logic
+  needed for the delete methods?
+ /**
+     * Removes a single node (score) from the matrix at (row, col).
+     * This method unlinks the node from both its row and column lists.
+     *
+     * @param row The row (reviewer) index
+     * @param col The column (movie) index
+     * @return True if a node was found and removed, false otherwise.
+     */
+    public boolean remove(int row, int col) {
+        Node nodeToRemove = getNode(row, col);
+        
+        // Node does not exist, so nothing to remove
+        if (nodeToRemove == null) {
+            return false;
+        }
+
+        // Unlink from horizontal (row) list
+        if (nodeToRemove.left != null) {
+            // It's not the first node in the row
+            nodeToRemove.left.right = nodeToRemove.right;
+        }
+        else {
+            // It IS the first node, so update the row header
+            findRowHeader(row).nNode = nodeToRemove.right;
+        }
+        if (nodeToRemove.right != null) {
+            nodeToRemove.right.left = nodeToRemove.left;
+        }
+
+        // Unlink from vertical (column) list
+        if (nodeToRemove.up != null) {
+            // It's not the first node in the column
+            nodeToRemove.up.down = nodeToRemove.down;
+        }
+        else {
+            // It IS the first node, so update the column header
+            findColHeader(col).nNode = nodeToRemove.down;
+        }
+        if (nodeToRemove.down != null) {
+            nodeToRemove.down.up = nodeToRemove.up;
+        }
+
+        return true;
+    }
+    // --- NEW METHOD END ---
+
+
+    // --- NEW METHOD START: removeRow ---
+    /**
+     * Removes an entire row (all ratings for a reviewer).
+     * This iterates the row and unlinks each node from its respective column.
+     *
+     * @param row The row (reviewer) to remove.
+     * @return True if the row had ratings and was removed, false if the
+     * reviewer did not exist or had no ratings.
+     */
+    public boolean removeRow(int row) {
+        HeaderNode headRow = findRowHeader(row);
+        
+        // If row doesn't exist or already has no ratings, return false.
+        if (headRow == null || headRow.nNode == null) {
+            return false;
+        }
+
+        Node curr = headRow.nNode;
+        while (curr != null) {
+            // For each node in the row, we must unlink it from its column list
+            if (curr.up != null) {
+                curr.up.down = curr.down;
+            }
+            else {
+                // This node was the first in its column, update column header
+                findColHeader(curr.col).nNode = curr.down;
+            }
+            
+            if (curr.down != null) {
+                curr.down.up = curr.up;
+            }
+            curr = curr.right; // Move to the next node in the row
+        }
+
+        // Finally, clear the row header's pointer, deleting the entire row list
+        headRow.nNode = null;
+        return true;
+    }
+    // --- NEW METHOD END ---
+
+
+    // --- NEW METHOD START: removeCol ---
+    /**
+     * Removes an entire column (all ratings for a movie).
+     * This iterates the column and unlinks each node from its respective row.
+     *
+     * @param col The column (movie) to remove.
+     * @return True if the column had ratings and was removed, false if the
+     * movie did not exist or had no ratings.
+     */
+    public boolean removeCol(int col) {
+        HeaderNode headCol = findColHeader(col);
+
+        // If col doesn't exist or already has no ratings, return false
+        if (headCol == null || headCol.nNode == null) {
+            return false;
+        }
+
+        Node curr = headCol.nNode;
+        while (curr != null) {
+            // For each node in the column, unlink it from its row list
+            if (curr.left != null) {
+                curr.left.right = curr.right;
+            }
+            else {
+                // This node was the first in its row, update row header
+                findRowHeader(curr.row).nNode = curr.right;
+            }
+            
+            if (curr.right != null) {
+                curr.right.left = curr.left;
+            }
+            curr = curr.down; // Move to the next node in the column
+        }
+
+        // Clear the column header's pointer, deleting the entire column list
+        headCol.nNode = null;
+        return true;
+    }
+    // --- NEW METHOD START: getNode (Helper) ---
+    /**
+     * Helper method to find and return a specific node at (row, col).
+     * @param row The row index
+     * @param col The col index
+     * @return The Node at (row, col), or null if not found.
+     */
+    private Node getNode(int row, int col) {
+        HeaderNode headRow = findRowHeader(row);
+        if (headRow == null) {
+            return null;
+        }
+
+        Node curr = headRow.nNode;
+        // Traverse the row list (which is faster than traversing a column)
+        while (curr != null && curr.col < col) {
+            curr = curr.right;
+        }
+
+        // If we found the node at the exact column
+        if (curr != null && curr.col == col) {
+            return curr;
+        }
+
+        // Node doesn't exist
+        return null;
+    }
+    // --- NEW METHOD END ---
