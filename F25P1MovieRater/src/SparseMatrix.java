@@ -90,9 +90,12 @@ public class SparseMatrix {
      * Inserts a value at the specified row and column. If a node already
      * exists at this position, its value is updated.
      *
-     * @param row - row value (reviewer)
-     * @param col - column value (movie)
-     * @param val - review value (score)
+     * @param row
+     *            - row value (reviewer)
+     * @param col
+     *            - column value (movie)
+     * @param val
+     *            - review value (score)
      */
     public void insert(int row, int col, int val) {
         Node newNode = new Node(row, col, val);
@@ -129,7 +132,6 @@ public class SparseMatrix {
             currentRow.left = newNode;
         }
 
-
         // --- VERTICAL (COLUMN) INSERTION ---
         // The original method was missing this entire section. To conform to
         // the orthogonal list representation, each node must also be linked
@@ -157,101 +159,105 @@ public class SparseMatrix {
             currentCol.up = newNode;
         }
     }
-    
+
+
     /**
      * 
-     * @param col column you want to list
+     * @param col
+     *            column you want to list
      * @return String of values in column
      */
     public String colList(int col) {
-        
+
         String f_string = "";
         HeaderNode colNode = findColHeader(col);
-        if(colNode == null) {
+        if (colNode == null) {
             return null;
         }
-        
+
         f_string = colNode.index + f_string;
         f_string = f_string + ":";
-        
+
         Node current = colNode.nNode;
-        
-        if(current == null) {
+
+        if (current == null) {
             return "";
         }
-        
-        while(current != null) {
+
+        while (current != null) {
             f_string = f_string + " " + current.value;
             current = current.down;
         }
-        
+
         return f_string;
     }
-    
+
+
     /**
      * 
-     * @param row you want to list
+     * @param row
+     *            you want to list
      * @return String of values in row
      */
     public String rowList(int row) {
-        
+
         String f_string = "";
         HeaderNode rowNode = findRowHeader(row);
-        if(rowNode == null) {
+        if (rowNode == null) {
             return null;
         }
-        
+
         f_string = rowNode.index + f_string;
         f_string = f_string + ":";
-        
+
         Node current = rowNode.nNode;
-        
-        if(current == null) {
+
+        if (current == null) {
             return "";
         }
-        
-        while(current != null) {
+
+        while (current != null) {
             f_string = f_string + " " + current.value;
             current = current.right;
         }
-        
+
         return f_string;
     }
-    
+
+
     /**
      * 
      * @return String of all values in matrix, "" if null
      */
     public String matrixList() {
-        String f_string = "";
-        
-        if(numRows == 0 || numCols == 0) {
+        String fString = "";
+
+        if (numRows == 0 || numCols == 0) {
             return "";
         }
-        
-        if(rowHeader == null || colHeader == null) {
+
+        if (rowHeader == null || colHeader == null) {
             return "";
         }
-        
+
         HeaderNode tempRowHeader = rowHeader;
         Node currentRow = rowHeader.nNode;
-        
-        while(tempRowHeader != null) {
-            f_string = f_string + tempRowHeader.index + ":";
-            while(currentRow != null) {
-                f_string = f_string + " (" + currentRow.col + ", " + currentRow.value + ")";
+
+        while (tempRowHeader != null) {
+            fString = fString + tempRowHeader.index + ":";
+            while (currentRow != null) {
+                fString = fString + " (" + currentRow.col + ", "
+                    + currentRow.value + ")";
                 currentRow = currentRow.right;
             }
-            f_string = f_string + "/n";
+            fString = fString + "/n";
             tempRowHeader = tempRowHeader.n;
             currentRow = tempRowHeader.nNode;
         }
-        
-        return f_string;
+
+        return fString;
     }
-    
-    
-    
+
 
     /**
      * 
@@ -272,6 +278,7 @@ public class SparseMatrix {
 
     /**
      * Helper file
+     * 
      * @param col
      *            index of the row you are searching for
      * @return HeaderNode - null or the header node of the row you are searching
