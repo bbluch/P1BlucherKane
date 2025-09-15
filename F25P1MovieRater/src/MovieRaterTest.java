@@ -95,4 +95,35 @@ public class MovieRaterTest extends TestCase {
         assertFuzzyEquals(multiline("2: (3, 7)", "3: (5, 8)", "5: (7, 9)",
             "7: (3, 10) (7, 1)"), it.printRatings());
     }
+
+
+    /**
+     * Tests the implementation of inserting at end of list
+     */
+    public void testInsertAtEndOfList() {
+        assertTrue(it.addReview(1, 1, 5));
+        assertTrue(it.addReview(1, 10, 8));
+        assertFuzzyEquals(it.listReviewer(1), "1: 5 8");
+    }
+
+
+    /**
+     * Tests the implementation of inserting at middle of list
+     */
+    public void testInsertAtMiddleOfList() {
+        assertTrue(it.addReview(2, 1, 5));
+        assertTrue(it.addReview(2, 10, 8));
+        assertTrue(it.addReview(2, 5, 7));
+        assertFuzzyEquals(it.listReviewer(2), "2: 5 7 8");
+    }
+
+
+    /**
+     * Tests the implementation of inserting at beginning of list
+     */
+    public void testInsertAtBeginningOfList() {
+        assertTrue(it.addReview(3, 10, 3));
+        assertTrue(it.addReview(3, 1, 7));
+        assertFuzzyEquals(it.listReviewer(3), "3: 7 3");
+    }
 }
