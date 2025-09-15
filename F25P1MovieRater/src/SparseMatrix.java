@@ -171,9 +171,9 @@ public class SparseMatrix {
 
         String fString = "";
         HeaderNode colNode = findColHeader(col);
-        if (colNode == null) {
-            return null;
-        }
+        // if (colNode == null) {
+        // return null;
+        // }
 
         fString = colNode.index + fString;
         fString = fString + ":";
@@ -203,9 +203,9 @@ public class SparseMatrix {
 
         String fString = "";
         HeaderNode rowNode = findRowHeader(row);
-        if (rowNode == null) {
-            return null;
-        }
+        // if (rowNode == null) {
+        // return null;
+        // }
 
         fString = rowNode.index + fString;
         fString = fString + ":";
