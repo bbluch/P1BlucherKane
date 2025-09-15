@@ -98,6 +98,21 @@ public class MovieRaterTest extends TestCase {
 
 
     /**
+     * Tests clear with values inserted
+     */
+    public void testClear() {
+        assertTrue(it.addReview(7, 3, 10));
+        assertTrue(it.addReview(2, 3, 7));
+        assertTrue(it.addReview(3, 5, 8));
+        assertTrue(it.addReview(5, 7, 9));
+        assertTrue(it.addReview(7, 7, 1));
+        assertTrue(it.clear());
+        assertFuzzyEquals(it.printRatings(), "");
+
+    }
+
+
+    /**
      * Tests the implementation of inserting at end of list
      */
     public void testInsertAtEndOfList() {
@@ -125,5 +140,42 @@ public class MovieRaterTest extends TestCase {
         assertTrue(it.addReview(3, 10, 3));
         assertTrue(it.addReview(3, 1, 7));
         assertFuzzyEquals(it.listReviewer(3), "3: 7 3");
+    }
+
+
+    /**
+     * Tests the implementation of inserting then updating
+     */
+    public void testInsertUpdate() {
+        assertTrue(it.addReview(2, 1, 5));
+        assertFuzzyEquals(it.listReviewer(2), "2: 5");
+        assertTrue(it.addReview(2, 1, 8));
+        assertFuzzyEquals(it.listReviewer(2), "2: 8");
+    }
+
+
+    /**
+     * Tests correct behavior for when a list does not exist
+     */
+    public void testNonExistentList() {
+        assertNull(it.listReviewer(7));
+        assertNull(it.listMovie(6));
+    }
+
+
+    /**
+     * Tests printing an empty matrix
+     */
+    public void testPrintEmpty() {
+        assertEquals("", it.printRatings());
+    }
+
+
+    /**
+     * 
+     */
+    public void testInsertOneItem() {
+        assertTrue(it.addReview(2, 1, 5));
+        assertFuzzyEquals(it.listReviewer(2), "2: 5");
     }
 }
