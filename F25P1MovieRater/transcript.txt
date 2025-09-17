@@ -1,4 +1,5 @@
 Transcript File for this Project:
+**We provided the LLM with P1.pdf and our github link to view our project**
 
 the class is a 2d sparse matrix. I want to use two orthogonal arrays to represent the data
 ChatGPT said:

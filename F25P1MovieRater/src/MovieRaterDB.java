@@ -148,18 +148,20 @@ public class MovieRaterDB implements MovieRater {
     // ----------------------------------------------------------
     /**
      * Return the index for the movie most similar to the specified one.
-     * @param movie the movie to find match for.
+     * 
+     * @param movie
+     *            the movie to find match for.
      * @return The best matching index.
-     * Return -1 if this movie does not exist or if there is no
-     * suitable match
+     *         Return -1 if this movie does not exist or if there is no
+     *         suitable match
      */
     public int similarMovie(int movie) {
         // 1. Get the target movie's column data
         SparseMatrix.HeaderNode targetHeader = matrix.findColHeader(movie);
-        
+
         // Return -1 if movie doesn't exist or has no ratings
         if (targetHeader == null || targetHeader.nNode == null) {
-            return -1; 
+            return -1;
         }
         SparseMatrix.Node targetColNodes = targetHeader.nNode;
 
@@ -171,18 +173,20 @@ public class MovieRaterDB implements MovieRater {
         while (otherHeader != null) {
             // Skip if it's the same movie or if the other movie has no ratings
             if (otherHeader.index != movie && otherHeader.nNode != null) {
-                
+
                 // 3. Calculate the similarity score
-                double score = calculateMovieSimilarity(
-                    targetColNodes, otherHeader.nNode);
+                double score = calculateMovieSimilarity(targetColNodes,
+                    otherHeader.nNode);
 
                 // 4. Track the best score (lowest positive score wins)
-                if (score != -1.0) { // Score of -1 means no shared reviewers [cite: 21]
+                if (score != -1.0) { // Score of -1 means no shared reviewers
+                                     // [cite: 21]
                     if (score < lowestScore) {
                         lowestScore = score;
                         bestMovieId = otherHeader.index;
                     }
-                    // Tie-breaker: If scores are equal, choose the movie with the lower index
+                    // Tie-breaker: If scores are equal, choose the movie with
+                    // the lower index
                     else if (score == lowestScore) {
                         bestMovieId = Math.min(bestMovieId, otherHeader.index);
                     }
@@ -198,15 +202,17 @@ public class MovieRaterDB implements MovieRater {
     // ----------------------------------------------------------
     /**
      * Return the index for the reviewer most similar to the specified one.
-     * @param reviewer the reviewer to find match for.
+     * 
+     * @param reviewer
+     *            the reviewer to find match for.
      * @return The best matching index.
-     * Return -1 if this reviewer does not exist or if there is no
-     * suitable match
+     *         Return -1 if this reviewer does not exist or if there is no
+     *         suitable match
      */
     public int similarReviewer(int reviewer) {
         // 1. Get the target reviewer's row data
         SparseMatrix.HeaderNode targetHeader = matrix.findRowHeader(reviewer);
-        
+
         // Return -1 if reviewer doesn't exist or has no ratings
         if (targetHeader == null || targetHeader.nNode == null) {
             return -1;
@@ -221,20 +227,24 @@ public class MovieRaterDB implements MovieRater {
         while (otherHeader != null) {
             // Skip if it's the same reviewer or has no ratings
             if (otherHeader.index != reviewer && otherHeader.nNode != null) {
-                
-                // 3. Calculate similarity score
-                double score = calculateReviewerSimilarity(
-                    targetRowNodes, otherHeader.nNode);
 
-                // 4. Track the best score (lowest positive score wins) [cite: 20]
-                if (score != -1.0) { // Score of -1 means no shared movies [cite: 21]
+                // 3. Calculate similarity score
+                double score = calculateReviewerSimilarity(targetRowNodes,
+                    otherHeader.nNode);
+
+                // 4. Track the best score (lowest positive score wins) [cite:
+                // 20]
+                if (score != -1.0) { // Score of -1 means no shared movies
+                                     // [cite: 21]
                     if (score < lowestScore) {
                         lowestScore = score;
                         bestReviewerId = otherHeader.index;
                     }
-                    // Tie-breaker: If scores are equal, choose the reviewer with the lower index
+                    // Tie-breaker: If scores are equal, choose the reviewer
+                    // with the lower index
                     else if (score == lowestScore) {
-                        bestReviewerId = Math.min(bestReviewerId, otherHeader.index);
+                        bestReviewerId = Math.min(bestReviewerId,
+                            otherHeader.index);
                     }
                 }
             }
