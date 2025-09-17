@@ -7,9 +7,13 @@
  */
 public class SparseMatrix {
 
+    // number of rows in the matrix
     private int numRows;
+    // number of columns in the matrix
     private int numCols;
+    // start of the header list of the row headers
     private HeaderNode rowHeader;
+    // start of the header list of the column headers
     private HeaderNode colHeader;
 
     /**
@@ -18,12 +22,19 @@ public class SparseMatrix {
      * -row and col indexes start at 0
      */
     private static class Node {
+        // index of the row of the Node (reviewer)
         int row;
+        // index of the col of the Node (movie)
         int col;
+        // value in node (rating)
         int value;
+        // Node to the left
         Node left;
+        // Node to the right
         Node right;
+        // Node above
         Node up;
+        // Node below
         Node down;
 
         Node(int row, int col, int val) {
@@ -42,8 +53,11 @@ public class SparseMatrix {
      * -nNode is the start of the doubly linked list of that row/col
      */
     private static class HeaderNode {
+        // index of header on the header list chain
         int index;
+        // next HeaderNode, below for row, to the right for col
         HeaderNode n;
+        // start of the data values attached to header
         Node nNode;
 
         HeaderNode(int index) {
@@ -101,8 +115,11 @@ public class SparseMatrix {
         Node newNode = new Node(row, col, val);
 
         // --- HORIZONTAL (ROW) INSERTION ---
+        // find header for row you want to insert to
         HeaderNode headRow = findRowHeader(row);
+        // start Node of the row you want to insert to
         Node currentRow = headRow.nNode;
+        // placeholder to move through list
         Node prevRow = null;
 
         // Traverse the row to find the correct position for the new node.
@@ -136,8 +153,11 @@ public class SparseMatrix {
         // The original method was missing this entire section. To conform to
         // the orthogonal list representation, each node must also be linked
         // vertically within its column.
+        // find header for col you want to insert to
         HeaderNode headCol = findColHeader(col);
+        // start Node of the col you want to insert to
         Node currentCol = headCol.nNode;
+        // placeholder to move through the list
         Node prevCol = null;
 
         // Traverse the column to find the correct position for the new node
@@ -168,16 +188,18 @@ public class SparseMatrix {
      * @return String of values in column
      */
     public String colList(int col) {
-
+        // string to concatenate and return
         String fString = "";
+        // find header for col you want to print
         HeaderNode colNode = findColHeader(col);
+
         // if (colNode == null) {
         // return null;
         // }
 
         fString = colNode.index + fString;
         fString = fString + ":";
-
+        // placeholder to traverse the list
         Node current = colNode.nNode;
 
         if (current == null) {
@@ -201,15 +223,18 @@ public class SparseMatrix {
      */
     public String rowList(int row) {
 
+        // string to concatenate and return
         String fString = "";
+        // find header for col you want to print
         HeaderNode rowNode = findRowHeader(row);
+
         // if (rowNode == null) {
         // return null;
         // }
 
         fString = rowNode.index + fString;
         fString = fString + ":";
-
+        // placeholder to traverse the list
         Node current = rowNode.nNode;
 
         if (current == null) {
@@ -230,6 +255,8 @@ public class SparseMatrix {
      * @return String of all values in matrix, "" if null
      */
     public String matrixList() {
+
+        // string to concatenate and return
         String fString = "";
 
         if (numRows == 0 || numCols == 0) {
@@ -240,10 +267,12 @@ public class SparseMatrix {
             return "";
         }
 
+        // placeholder to traverse the header list
         HeaderNode tempRowHeader = rowHeader;
         // Node currentRow = rowHeader.nNode;
 
         while (tempRowHeader != null) {
+            // placeholder to traverse the list
             Node currentRow = tempRowHeader.nNode;
             if (currentRow != null) {
                 fString = fString + tempRowHeader.index + ":";
