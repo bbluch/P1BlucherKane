@@ -21,7 +21,7 @@ public class SparseMatrix {
      * 
      * -row and col indexes start at 0
      */
-    private static class Node {
+    static class Node {
         // index of the row of the Node (reviewer)
         int row;
         // index of the col of the Node (movie)
@@ -52,7 +52,7 @@ public class SparseMatrix {
      * -n is the next headerNode, so down for row and left for column
      * -nNode is the start of the doubly linked list of that row/col
      */
-    private static class HeaderNode {
+    static class HeaderNode {
         // index of header on the header list chain
         int index;
         // next HeaderNode, below for row, to the right for col
@@ -458,7 +458,7 @@ public class SparseMatrix {
      *            index of the row you are searching for
      * @return null or the header of the row you are searching for
      */
-    private HeaderNode findRowHeader(int row) {
+    public HeaderNode findRowHeader(int row) {
         HeaderNode checker = rowHeader.n;
 
         while (checker != null && checker.index != row) {
@@ -477,7 +477,7 @@ public class SparseMatrix {
      * @return HeaderNode - null or the header node of the row you are searching
      *         for
      */
-    private HeaderNode findColHeader(int col) {
+    public HeaderNode findColHeader(int col) {
         HeaderNode checker = colHeader.n;
 
         while (checker != null && checker.index != col) {
@@ -485,6 +485,22 @@ public class SparseMatrix {
         }
         return checker;
 
+    }
+    
+    /**
+     * Gets the main row header node (the start of the header list, index 0).
+     * @return the rowHeader (header for index 0)
+     */
+    public HeaderNode getRowHeaderList() {
+        return rowHeader;
+    }
+
+    /**
+     * Gets the main col header node (the start of the header list, index 0).
+     * @return the colHeader (header for index 0)
+     */
+    public HeaderNode getColHeaderList() {
+        return colHeader;
     }
 
 }
