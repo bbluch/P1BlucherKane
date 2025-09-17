@@ -39,8 +39,11 @@ public class SparseMatrix {
          * Create a new Node object.
          * 
          * @param row
+         *            - row value for node
          * @param col
+         *            - col value for node
          * @param val
+         *            - val for node
          */
         Node(int row, int col, int val) {
             this.row = row;
@@ -124,6 +127,7 @@ public class SparseMatrix {
          * Create a new HeaderNode object.
          * 
          * @param index
+         *            - index of the HeaderNode
          */
         HeaderNode(int index) {
             this.setIndex(index);
@@ -394,13 +398,17 @@ public class SparseMatrix {
         // string to concatenate and return
         String fString = "";
 
-        if (numRows == 0 || numCols == 0) {
-            return "";
-        }
+        /*
+         * if (numRows == 0 || numCols == 0) {
+         * return "";
+         * }
+         */
 
-        if (rowHeader == null || colHeader == null) {
-            return "";
-        }
+        /*
+         * if (rowHeader == null || colHeader == null) {
+         * return "";
+         * }
+         */
 
         // placeholder to traverse the header list
         HeaderNode tempRowHeader = rowHeader;
@@ -438,9 +446,11 @@ public class SparseMatrix {
      */
     private Node getNode(int row, int col) {
         HeaderNode headRow = findRowHeader(row);
-        if (headRow == null) {
-            return null;
-        }
+        /*
+         * if (headRow == null) {
+         * return null;
+         * }
+         */
 
         Node curr = headRow.getnNode();
         // Traverse the row list (which is faster than traversing a column)

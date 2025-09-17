@@ -553,4 +553,29 @@ public class MovieRaterTest extends TestCase {
         assertEquals(25, it.similarMovie(100));
     }
 
+
+    // ----------------------------------------------------------
+    /**
+     * Tests to make sure -1 is returned when a movie has no ratings.
+     */
+    public void testSimilarMovieNoRatings() {
+        it.addReview(1, 10, 5);
+        it.deleteScore(1, 10);
+        assertEquals(-1, it.similarMovie(10));
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Tests for logic branch where a Reviewer rated movie B but not A.
+     */
+    public void testSimilarMovieLogicBranch() {
+        it.addReview(5, 10, 8);
+        it.addReview(10, 10, 10);
+        it.addReview(3, 20, 5);
+        it.addReview(10, 20, 5);
+        it.addReview(10, 30, 1);
+        assertEquals(20, it.similarMovie(10));
+    }
+
 }
