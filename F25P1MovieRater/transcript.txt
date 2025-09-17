@@ -1046,3 +1046,185 @@ Here are all the new and updated methods you will need.
 
         return totalDiff / sharedCount;
     }
+    
+
+Write tests to cover the logic in the newly implemented similarMovie and 
+similarReviewer methods
+
+Of course. The similarity logic is the most complex part of the project and 
+has many edge cases that mutations will attack.
+
+Here are specific tests you can add to your MovieRaterTest.java file to cover
+ the logic in similarMovie, similarReviewer, and their private helper methods.
+  These tests target logic branches, boundary conditions, and the specific 
+  calculations defined in the project description.
+
+Tests for similarReviewer() and its Helper
+
+/**
+     * Test similarity for a reviewer that does not exist or has no ratings.
+     * Both should return -1.
+     */
+    public void testSimilarReviewerNonExistent() {
+        // Test on an empty database
+        assertEquals(-1, it.similarReviewer(1));
+
+        // Add data, but test a reviewer ID that hasn't rated anything
+        it.addReview(1, 1, 5);
+        assertEquals(-1, it.similarReviewer(2)); // Reviewer 2 has no ratings
+    }
+
+    /**
+     * Test similarity when other reviewers exist, but none share any movies.
+     * Per the spec, the score for each is -1, so no suitable match exists.
+     */
+    public void testSimilarReviewerNoSharedMovies() {
+        it.addReview(1, 1, 5); // Reviewer 1
+        it.addReview(1, 2, 5);
+        it.addReview(2, 3, 5); // Reviewer 2 (shares no movies with 1)
+        it.addReview(3, 4, 5); // Reviewer 3 (shares no movies with 1)
+        
+        // No one has a valid similarity score, so it must return -1.
+        assertEquals(-1, it.similarReviewer(1));
+    }
+
+    /**
+     * Test a scenario with one perfect match (score 0.0) and one bad match.
+     * This tests the core "find lowest score" logic.
+     */
+    public void testSimilarReviewerPerfectMatch() {
+        // Reviewer 10 (Target)
+        it.addReview(10, 1, 5);
+        it.addReview(10, 2, 8);
+
+        // Reviewer 20 (Bad Match)
+        // Score = (abs(5-1) + abs(8-10)) / 2 = (4 + 2) / 2 = 3.0
+        it.addReview(20, 1, 1);
+        it.addReview(20, 2, 10);
+        
+        // Reviewer 3 (Perfect Match)
+        // Score = (abs(5-5) + abs(8-8)) / 2 = (0 + 0) / 2 = 0.0
+        it.addReview(3, 1, 5);
+        it.addReview(3, 2, 8);
+        
+        // Reviewer 3 must be the best match.
+        assertEquals(3, it.similarReviewer(10));
+    }
+
+    /**
+     * Tests that the helper logic correctly skips over non-shared movies.
+     */
+    public void testSimilarReviewerComplexTraversal() {
+        // Reviewer 1 (Target)
+        it.addReview(1, 1, 5);  // Skips
+        it.addReview(1, 5, 10); // Match
+        it.addReview(1, 10, 1); // Match
+        it.addReview(1, 20, 8); // Skips
+
+        // Reviewer 2 (Competitor)
+        it.addReview(2, 2, 5);  // Skips
+        it.addReview(2, 5, 8);  // Match: diff 2
+        it.addReview(2, 9, 1);  // Skips
+        it.addReview(2, 10, 3); // Match: diff 2
+        it.addReview(2, 15, 8); // Skips
+        
+        // Score = (abs(10-8) + abs(1-3)) / 2 = (2 + 2) / 2 = 2.0
+        // Since R2 is the only other reviewer, they must be the match.
+        assertEquals(2, it.similarReviewer(1));
+    }
+
+    /**
+     * Tests the tie-breaker rule: when two reviewers have the same lowest score,
+     * the one with the SMALLER index must be returned.
+     */
+    public void testSimilarReviewerTieBreaker() {
+        // Reviewer 100 (Target)
+        it.addReview(100, 1, 5);
+
+        // Reviewer 50
+        // Score = abs(5-1) / 1 = 4.0
+        it.addReview(50, 1, 1); 
+        
+        // Reviewer 25
+        // Score = abs(5-9) / 1 = 4.0  (TIE)
+        it.addReview(25, 1, 9);
+
+        // Both 50 and 25 have the score 4.0. The method MUST return 25.
+        assertEquals(25, it.similarReviewer(100));
+        
+        // Add a new, better reviewer to make sure logic still works
+        it.addReview(30, 1, 6); // Score = 1.0
+        assertEquals(30, it.similarReviewer(100));
+    }
+    
+    
+    Tests for similarMovie() and its Helper
+(These are mirror-logic tests of the similarReviewer ones, which is necessary
+ to kill mutants in the similarMovie and calculateMovieSimilarity methods specifically.)
+
+ /**
+     * Test similarity for a movie that does not exist or has no ratings.
+     */
+    public void testSimilarMovieNonExistent() {
+        // Test on an empty database
+        assertEquals(-1, it.similarMovie(1));
+
+        // Add data, but test a movie ID that hasn't been rated
+        it.addReview(1, 1, 5);
+        assertEquals(-1, it.similarMovie(2)); // Movie 2 has no ratings
+    }
+
+    /**
+     * Test similarity when other movies exist, but none share any reviewers.
+     */
+    public void testSimilarMovieNoSharedReviewers() {
+        it.addReview(1, 1, 5); // Movie 1
+        it.addReview(2, 1, 5);
+        it.addReview(3, 2, 5); // Movie 2 (shares no reviewers with 1)
+        it.addReview(4, 3, 5); // Movie 3 (shares no reviewers with 1)
+        
+        // No one has a valid similarity score, so it must return -1.
+        assertEquals(-1, it.similarMovie(1));
+    }
+
+    /**
+     * Test a scenario with one perfect match (score 0.0) for a movie.
+     */
+    public void testSimilarMoviePerfectMatch() {
+        // Movie 10 (Target)
+        it.addReview(1, 10, 5);
+        it.addReview(2, 10, 8);
+
+        // Movie 20 (Bad Match)
+        // Score = (abs(5-1) + abs(8-10)) / 2 = 3.0
+        it.addReview(1, 20, 1);
+        it.addReview(2, 20, 10);
+        
+        // Movie 3 (Perfect Match)
+        // Score = (abs(5-5) + abs(8-8)) / 2 = 0.0
+        it.addReview(1, 3, 5);
+        it.addReview(2, 3, 8);
+        
+        // Movie 3 must be the best match.
+        assertEquals(3, it.similarMovie(10));
+    }
+
+    /**
+     * Tests the tie-breaker rule for movies. When two movies have the same
+     * lowest score, the one with the SMALLER index must be returned.
+     */
+    public void testSimilarMovieTieBreaker() {
+        // Movie 100 (Target)
+        it.addReview(1, 100, 5);
+
+        // Movie 50
+        // Score = abs(5-1) / 1 = 4.0
+        it.addReview(1, 50, 1); 
+        
+        // Movie 25
+        // Score = abs(5-9) / 1 = 4.0  (TIE)
+        it.addReview(1, 25, 9);
+
+        // Both 50 and 25 have the score 4.0. The method MUST return 25.
+        assertEquals(25, it.similarMovie(100));
+    }

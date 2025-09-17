@@ -7,42 +7,101 @@
  */
 public class SparseMatrix {
 
-    // number of rows in the matrix
-    private int numRows;
-    // number of columns in the matrix
-    private int numCols;
-    // start of the header list of the row headers
-    private HeaderNode rowHeader;
-    // start of the header list of the column headers
-    private HeaderNode colHeader;
+    private int numRows; // number of rows in the matrix
+    private int numCols; // number of columns in the matrix
+    private HeaderNode rowHeader; // start of the header list of the row headers
+    private HeaderNode colHeader; // start of the header list of the column
+                                  // headers
 
     /**
      * node class for the values inside the orthogonal matrix
      * 
      * -row and col indexes start at 0
      */
-    static class Node {
+    public static class Node {
         // index of the row of the Node (reviewer)
-        int row;
+        private int row;
         // index of the col of the Node (movie)
-        int col;
+        private int col;
         // value in node (rating)
-        int value;
+        private int value;
         // Node to the left
-        Node left;
+        private Node left;
         // Node to the right
-        Node right;
+        private Node right;
         // Node above
-        Node up;
+        private Node up;
         // Node below
-        Node down;
+        private Node down;
 
+        // ----------------------------------------------------------
+        /**
+         * Create a new Node object.
+         * 
+         * @param row
+         * @param col
+         * @param val
+         */
         Node(int row, int col, int val) {
             this.row = row;
             this.col = col;
             this.value = val;
         }
-        // no getters and setters needed. use node.row or node.left instead
+
+
+        // ----------------------------------------------------------
+        /**
+         * Get the current value of row.
+         * 
+         * @return The value of row for this object.
+         */
+        public int getRow() {
+            return row;
+        }
+
+
+        // ----------------------------------------------------------
+        /**
+         * Get the current value of col.
+         * 
+         * @return The value of col for this object.
+         */
+        public int getCol() {
+            return col;
+        }
+
+
+        // ----------------------------------------------------------
+        /**
+         * Get the current value of value.
+         * 
+         * @return The value of value variable for this object.
+         */
+        public int getValue() {
+            return value;
+        }
+
+
+        // ----------------------------------------------------------
+        /**
+         * Get the current value of right.
+         * 
+         * @return The value of right for this object.
+         */
+        public Node getRight() {
+            return right;
+        }
+
+
+        // ----------------------------------------------------------
+        /**
+         * Get the current value of down.
+         * 
+         * @return The value of down for this object.
+         */
+        public Node getDown() {
+            return down;
+        }
     }
 
 
@@ -52,21 +111,97 @@ public class SparseMatrix {
      * -n is the next headerNode, so down for row and left for column
      * -nNode is the start of the doubly linked list of that row/col
      */
-    static class HeaderNode {
+    public static class HeaderNode {
         // index of header on the header list chain
-        int index;
+        private int index;
         // next HeaderNode, below for row, to the right for col
-        HeaderNode n;
+        private HeaderNode n;
         // start of the data values attached to header
-        Node nNode;
+        private Node nNode;
 
+        // ----------------------------------------------------------
+        /**
+         * Create a new HeaderNode object.
+         * 
+         * @param index
+         */
         HeaderNode(int index) {
+            this.setIndex(index);
+        }
+
+
+        // ----------------------------------------------------------
+        /**
+         * Get the current value of nNode.
+         * 
+         * @return The value of nNode for this object.
+         */
+        public Node getnNode() {
+            return nNode;
+        }
+
+
+        // ----------------------------------------------------------
+        /**
+         * Set the value of nNode
+         * 
+         * @param nNode
+         *            next node
+         */
+        public void setnNode(SparseMatrix.Node nNode) {
+            this.nNode = nNode;
+
+        }
+
+
+        // ----------------------------------------------------------
+        /**
+         * Get the current value of index.
+         * 
+         * @return The value of index for this object.
+         */
+        public int getIndex() {
+            return index;
+        }
+
+
+        // ----------------------------------------------------------
+        /**
+         * Set the value of index for this object.
+         * 
+         * @param index
+         *            The new value for index.
+         */
+        public void setIndex(int index) {
             this.index = index;
+        }
+
+
+        // ----------------------------------------------------------
+        /**
+         * Get the current value of n.
+         * 
+         * @return The value of n for this object.
+         */
+        public HeaderNode getN() {
+            return n;
+        }
+
+
+        // ----------------------------------------------------------
+        /**
+         * Set the value of n for this object.
+         * 
+         * @param n
+         *            The new value for n.
+         */
+        public void setN(HeaderNode n) {
+            this.n = n;
         }
     }
 
     /**
-     * SparseMatric constructor. Sets up outside headers
+     * SparseMatrix constructor. Sets up outside headers
      * 
      * @param numRows
      *            number of rows for header
@@ -83,7 +218,7 @@ public class SparseMatrix {
         HeaderNode tempStart = rowHeader;
         for (int i = 1; i < numRows; i++) {
             HeaderNode newNode = new HeaderNode(i);
-            tempStart.n = newNode;
+            tempStart.setN(newNode);
             tempStart = newNode;
         }
 
@@ -93,7 +228,7 @@ public class SparseMatrix {
         tempStart = colHeader;
         for (int i = 1; i < numCols; i++) {
             HeaderNode newNode = new HeaderNode(i);
-            tempStart.n = newNode;
+            tempStart.setN(newNode);
             tempStart = newNode;
         }
 
@@ -118,7 +253,7 @@ public class SparseMatrix {
         // find header for row you want to insert to
         HeaderNode headRow = findRowHeader(row);
         // start Node of the row you want to insert to
-        Node currentRow = headRow.nNode;
+        Node currentRow = headRow.getnNode();
         // placeholder to move through list
         Node prevRow = null;
 
@@ -143,7 +278,7 @@ public class SparseMatrix {
             prevRow.right = newNode;
         }
         else {
-            headRow.nNode = newNode; // New first node for this row
+            headRow.setnNode(newNode); // New first node for this row
         }
         if (currentRow != null) {
             currentRow.left = newNode;
@@ -156,7 +291,7 @@ public class SparseMatrix {
         // find header for col you want to insert to
         HeaderNode headCol = findColHeader(col);
         // start Node of the col you want to insert to
-        Node currentCol = headCol.nNode;
+        Node currentCol = headCol.getnNode();
         // placeholder to move through the list
         Node prevCol = null;
 
@@ -173,7 +308,7 @@ public class SparseMatrix {
             prevCol.down = newNode;
         }
         else {
-            headCol.nNode = newNode; // New first node for this column
+            headCol.setnNode(newNode); // New first node for this column
         }
         if (currentCol != null) {
             currentCol.up = newNode;
@@ -197,10 +332,10 @@ public class SparseMatrix {
         // return null;
         // }
 
-        fString = colNode.index + fString;
+        fString = colNode.getIndex() + fString;
         fString = fString + ":";
         // placeholder to traverse the list
-        Node current = colNode.nNode;
+        Node current = colNode.getnNode();
 
         if (current == null) {
             return null;
@@ -232,10 +367,10 @@ public class SparseMatrix {
         // return null;
         // }
 
-        fString = rowNode.index + fString;
+        fString = rowNode.getIndex() + fString;
         fString = fString + ":";
         // placeholder to traverse the list
-        Node current = rowNode.nNode;
+        Node current = rowNode.getnNode();
 
         if (current == null) {
             return null;
@@ -273,9 +408,9 @@ public class SparseMatrix {
 
         while (tempRowHeader != null) {
             // placeholder to traverse the list
-            Node currentRow = tempRowHeader.nNode;
+            Node currentRow = tempRowHeader.getnNode();
             if (currentRow != null) {
-                fString = fString + tempRowHeader.index + ":";
+                fString = fString + tempRowHeader.getIndex() + ":";
                 while (currentRow != null) {
                     fString = fString + " (" + currentRow.col + ", "
                         + currentRow.value + ")";
@@ -283,7 +418,7 @@ public class SparseMatrix {
                 }
                 fString = fString + "\n";
             }
-            tempRowHeader = tempRowHeader.n;
+            tempRowHeader = tempRowHeader.getN();
             // currentRow = tempRowHeader.nNode;
         }
 
@@ -307,7 +442,7 @@ public class SparseMatrix {
             return null;
         }
 
-        Node curr = headRow.nNode;
+        Node curr = headRow.getnNode();
         // Traverse the row list (which is faster than traversing a column)
         while (curr != null && curr.col < col) {
             curr = curr.right;
@@ -349,7 +484,7 @@ public class SparseMatrix {
         }
         else {
             // It IS the first node, so update the row header
-            findRowHeader(row).nNode = nodeToRemove.right;
+            findRowHeader(row).setnNode(nodeToRemove.right);
         }
         if (nodeToRemove.right != null) {
             nodeToRemove.right.left = nodeToRemove.left;
@@ -362,7 +497,7 @@ public class SparseMatrix {
         }
         else {
             // It IS the first node, so update the column header
-            findColHeader(col).nNode = nodeToRemove.down;
+            findColHeader(col).setnNode(nodeToRemove.down);
         }
         if (nodeToRemove.down != null) {
             nodeToRemove.down.up = nodeToRemove.up;
@@ -385,11 +520,11 @@ public class SparseMatrix {
         HeaderNode headRow = findRowHeader(row);
 
         // If row doesn't exist or already has no ratings, return false.
-        if (headRow == null || headRow.nNode == null) {
+        if (headRow == null || headRow.getnNode() == null) {
             return false;
         }
 
-        Node curr = headRow.nNode;
+        Node curr = headRow.getnNode();
         while (curr != null) {
             // For each node in the row, we must unlink it from its column list
             if (curr.up != null) {
@@ -397,7 +532,7 @@ public class SparseMatrix {
             }
             else {
                 // This node was the first in its column, update column header
-                findColHeader(curr.col).nNode = curr.down;
+                findColHeader(curr.col).setnNode(curr.down);
             }
 
             if (curr.down != null) {
@@ -407,7 +542,7 @@ public class SparseMatrix {
         }
 
         // Finally, clear the row header's pointer, deleting the entire row list
-        headRow.nNode = null;
+        headRow.setnNode(null);
         return true;
     }
 
@@ -425,11 +560,11 @@ public class SparseMatrix {
         HeaderNode headCol = findColHeader(col);
 
         // If col doesn't exist or already has no ratings, return false
-        if (headCol == null || headCol.nNode == null) {
+        if (headCol == null || headCol.getnNode() == null) {
             return false;
         }
 
-        Node curr = headCol.nNode;
+        Node curr = headCol.getnNode();
         while (curr != null) {
             // For each node in the column, unlink it from its row list
             if (curr.left != null) {
@@ -437,7 +572,7 @@ public class SparseMatrix {
             }
             else {
                 // This node was the first in its row, update row header
-                findRowHeader(curr.row).nNode = curr.right;
+                findRowHeader(curr.row).setnNode(curr.right);
             }
 
             if (curr.right != null) {
@@ -447,7 +582,7 @@ public class SparseMatrix {
         }
 
         // Clear the column header's pointer, deleting the entire column list
-        headCol.nNode = null;
+        headCol.setnNode(null);
         return true;
     }
 
@@ -459,10 +594,10 @@ public class SparseMatrix {
      * @return null or the header of the row you are searching for
      */
     public HeaderNode findRowHeader(int row) {
-        HeaderNode checker = rowHeader.n;
+        HeaderNode checker = rowHeader.getN();
 
-        while (checker != null && checker.index != row) {
-            checker = checker.n;
+        while (checker != null && checker.getIndex() != row) {
+            checker = checker.getN();
         }
         return checker;
 
@@ -478,25 +613,29 @@ public class SparseMatrix {
      *         for
      */
     public HeaderNode findColHeader(int col) {
-        HeaderNode checker = colHeader.n;
+        HeaderNode checker = colHeader.getN();
 
-        while (checker != null && checker.index != col) {
-            checker = checker.n;
+        while (checker != null && checker.getIndex() != col) {
+            checker = checker.getN();
         }
         return checker;
 
     }
-    
+
+
     /**
      * Gets the main row header node (the start of the header list, index 0).
+     * 
      * @return the rowHeader (header for index 0)
      */
     public HeaderNode getRowHeaderList() {
         return rowHeader;
     }
 
+
     /**
      * Gets the main col header node (the start of the header list, index 0).
+     * 
      * @return the colHeader (header for index 0)
      */
     public HeaderNode getColHeaderList() {

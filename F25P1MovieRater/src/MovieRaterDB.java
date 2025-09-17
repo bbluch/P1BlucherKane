@@ -160,10 +160,10 @@ public class MovieRaterDB implements MovieRater {
         SparseMatrix.HeaderNode targetHeader = matrix.findColHeader(movie);
 
         // Return -1 if movie doesn't exist or has no ratings
-        if (targetHeader == null || targetHeader.nNode == null) {
+        if (targetHeader == null || targetHeader.getnNode() == null) {
             return -1;
         }
-        SparseMatrix.Node targetColNodes = targetHeader.nNode;
+        SparseMatrix.Node targetColNodes = targetHeader.getnNode();
 
         int bestMovieId = -1;
         double lowestScore = Double.MAX_VALUE;
@@ -172,27 +172,27 @@ public class MovieRaterDB implements MovieRater {
         SparseMatrix.HeaderNode otherHeader = matrix.getColHeaderList();
         while (otherHeader != null) {
             // Skip if it's the same movie or if the other movie has no ratings
-            if (otherHeader.index != movie && otherHeader.nNode != null) {
+            if (otherHeader.getIndex() != movie && otherHeader.getnNode() != null) {
 
                 // 3. Calculate the similarity score
                 double score = calculateMovieSimilarity(targetColNodes,
-                    otherHeader.nNode);
+                    otherHeader.getnNode());
 
                 // 4. Track the best score (lowest positive score wins)
                 if (score != -1.0) { // Score of -1 means no shared reviewers
                                      // [cite: 21]
                     if (score < lowestScore) {
                         lowestScore = score;
-                        bestMovieId = otherHeader.index;
+                        bestMovieId = otherHeader.getIndex();
                     }
                     // Tie-breaker: If scores are equal, choose the movie with
                     // the lower index
                     else if (score == lowestScore) {
-                        bestMovieId = Math.min(bestMovieId, otherHeader.index);
+                        bestMovieId = Math.min(bestMovieId, otherHeader.getIndex());
                     }
                 }
             }
-            otherHeader = otherHeader.n; // Move to the next movie
+            otherHeader = otherHeader.getN(); // Move to the next movie
         }
 
         return bestMovieId; // Will be -1 if no suitable match was found
@@ -214,10 +214,10 @@ public class MovieRaterDB implements MovieRater {
         SparseMatrix.HeaderNode targetHeader = matrix.findRowHeader(reviewer);
 
         // Return -1 if reviewer doesn't exist or has no ratings
-        if (targetHeader == null || targetHeader.nNode == null) {
+        if (targetHeader == null || targetHeader.getnNode() == null) {
             return -1;
         }
-        SparseMatrix.Node targetRowNodes = targetHeader.nNode;
+        SparseMatrix.Node targetRowNodes = targetHeader.getnNode();
 
         int bestReviewerId = -1;
         double lowestScore = Double.MAX_VALUE;
@@ -226,11 +226,11 @@ public class MovieRaterDB implements MovieRater {
         SparseMatrix.HeaderNode otherHeader = matrix.getRowHeaderList();
         while (otherHeader != null) {
             // Skip if it's the same reviewer or has no ratings
-            if (otherHeader.index != reviewer && otherHeader.nNode != null) {
+            if (otherHeader.getIndex() != reviewer && otherHeader.getnNode() != null) {
 
                 // 3. Calculate similarity score
                 double score = calculateReviewerSimilarity(targetRowNodes,
-                    otherHeader.nNode);
+                    otherHeader.getnNode());
 
                 // 4. Track the best score (lowest positive score wins) [cite:
                 // 20]
@@ -238,17 +238,17 @@ public class MovieRaterDB implements MovieRater {
                                      // [cite: 21]
                     if (score < lowestScore) {
                         lowestScore = score;
-                        bestReviewerId = otherHeader.index;
+                        bestReviewerId = otherHeader.getIndex();
                     }
                     // Tie-breaker: If scores are equal, choose the reviewer
                     // with the lower index
                     else if (score == lowestScore) {
                         bestReviewerId = Math.min(bestReviewerId,
-                            otherHeader.index);
+                            otherHeader.getIndex());
                     }
                 }
             }
-            otherHeader = otherHeader.n; // Move to the next reviewer
+            otherHeader = otherHeader.getN(); // Move to the next reviewer
         }
 
         return bestReviewerId; // Will be -1 if no suitable match was found
@@ -275,18 +275,19 @@ public class MovieRaterDB implements MovieRater {
         SparseMatrix.Node currY = rowY;
 
         while (currX != null && currY != null) {
-            if (currX.col < currY.col) {
-                currX = currX.right; // Movie rated by X, not Y
+            if (currX.getCol() < currY.getCol()) {
+                currX = currX.getRight(); // Movie rated by X, not Y
             }
-            else if (currY.col < currX.col) {
-                currY = currY.right; // Movie rated by Y, not X
+            else if (currY.getCol() < currX.getCol()) {
+                currY = currY.getRight(); // Movie rated by Y, not X
             }
             else {
                 // Shared movie found! [cite: 18]
-                totalDiff += Math.abs(currX.value - currY.value); // [cite: 18]
+                totalDiff += Math.abs(currX.getValue() - currY.getValue()); // [cite:
+                                                                            // 18]
                 sharedCount++; // [cite: 19]
-                currX = currX.right;
-                currY = currY.right;
+                currX = currX.getRight();
+                currY = currY.getRight();
             }
         }
 
@@ -317,18 +318,18 @@ public class MovieRaterDB implements MovieRater {
         SparseMatrix.Node currB = colB;
 
         while (currA != null && currB != null) {
-            if (currA.row < currB.row) {
-                currA = currA.down; // Reviewer rated A, not B
+            if (currA.getRow() < currB.getRow()) {
+                currA = currA.getDown(); // Reviewer rated A, not B
             }
-            else if (currB.row < currA.row) {
-                currB = currB.down; // Reviewer rated B, not A
+            else if (currB.getRow() < currA.getRow()) {
+                currB = currB.getDown(); // Reviewer rated B, not A
             }
             else {
                 // Shared reviewer found!
-                totalDiff += Math.abs(currA.value - currB.value);
+                totalDiff += Math.abs(currA.getValue() - currB.getValue());
                 sharedCount++;
-                currA = currA.down;
-                currB = currB.down;
+                currA = currA.getDown();
+                currB = currB.getDown();
             }
         }
 
