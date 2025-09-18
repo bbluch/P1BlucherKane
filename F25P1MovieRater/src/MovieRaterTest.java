@@ -851,4 +851,35 @@ public class MovieRaterTest extends TestCase {
         // Mutant sees 1.0 < 3.0 and picks M20.
         // Test: assertEquals(20, 20) -> PASSES. This mutant is NOT killed.
     }
+
+
+    /**
+     * Kills the "+=" mutant (and other math mutants).
+     */
+    public void testSimilarMovieAccumulationMutant() {
+        it.addReview(1, 10, 10); // R1
+        it.addReview(2, 10, 10); // R2
+        it.addReview(3, 10, 10); // R3
+
+        // Competitor A (Decoy)
+        it.addReview(1, 20, 1); // Diff = 9
+        it.addReview(2, 20, 1); // Diff = 9
+        it.addReview(3, 20, 9); // Diff = 2 (total = 20)
+        // Score = 20 / 3 = 6.67
+
+        // Competitor B (Winner)
+        it.addReview(1, 30, 8); // Diff = 2
+        it.addReview(2, 30, 8); // Diff = 2
+        it.addReview(3, 30, 8); // Diff = 2 (total = 6)
+        // Score = 6 / 3 = 2.0
+
+        // Assert: M30 is the winner
+        assertEquals(30, it.similarMovie(10));
+
+        // Mutant Analysis (+= -> =):
+        // M20 totalDiff only keeps the LAST value: 2. Score = 2/3 = 0.67
+        // M30 totalDiff only keeps the LAST value: 2. Score = 2/3 = 0.67
+        // This results in a tie. The mutant will pick 20 (lower index).
+        // Test: assertEquals(30, 20) -> FAILS. Mutant KILLED.
+    }
 }
