@@ -189,9 +189,6 @@ public class SparseMatrix {
         rowHeader = new HeaderNode(0);
         colHeader = new HeaderNode(0);
 
-        // numRows/numCols can be used to track the highest index seen
-        // this.numRows = 0;
-        // this.numCols = 0;
     }
 
 
