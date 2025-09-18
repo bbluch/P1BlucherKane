@@ -262,7 +262,7 @@ public class SparseMatrix {
             headCol.setnNode(newNode); // New first node for this column
         }
         if (currentCol != null) {
-            currentCol.up = newNode;
+            currentCol.up = newNode; // iterate to next node
         }
     }
 
