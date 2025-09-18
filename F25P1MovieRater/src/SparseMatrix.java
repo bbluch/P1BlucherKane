@@ -207,10 +207,6 @@ public class SparseMatrix {
     /**
      * SparseMatrix constructor. Sets up outside headers
      * 
-     * @param numRows
-     *            number of rows for header
-     * @param numCols
-     *            number of cols for header
      */
     public SparseMatrix() {
         // We only create the starting (dummy) headers. Lists will grow on
