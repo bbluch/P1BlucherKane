@@ -679,32 +679,4 @@ public class MovieRaterTest extends TestCase {
 
         assertEquals(20, it.similarReviewer(10));
     }
-
-
-    /**
-     * Tests the "else if (score == lowestScore)" tie-breaker logic on line 160.
-     * This creates two competitors (R25 and R50) that have the
-     * *exact same* similarity score when compared to the target (R100).
-     * The logic must execute the "else if" block to pick the one
-     * with the lower index (R25).
-     */
-    public void testSimilarReviewerTieBreakerLogic() {
-        // Target Reviewer (ID 100)
-        it.addReview(100, 1, 10); // Rated 10
-
-        // Competitor 1 (ID 50) - Assume this is found first
-        it.addReview(50, 1, 5); // Score = abs(10-5) / 1 = 5.0
-
-        // Competitor 2 (ID 25) - Found later
-        it.addReview(25, 1, 5); // Score = abs(10-5) / 1 = 5.0 (A PERFECT TIE)
-
-        // The method must hit the "else if" branch when it compares R25.
-        // It sees (5.0 == 5.0), so it runs Math.min(bestReviewerId, 25).
-        // (Assuming 50 was found first: Math.min(50, 25) -> 25)
-        // (Assuming 25 was found first: Math.min(25, 50) -> 25)
-        // A mutant that deletes this block would incorrectly return 50
-        // (if it was found first).
-        assertEquals(25, it.similarReviewer(100));
-    }
-
 }

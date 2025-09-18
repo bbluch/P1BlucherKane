@@ -160,7 +160,7 @@ public class MovieRaterDB implements MovieRater {
         SparseMatrix.HeaderNode targetHeader = matrix.findColHeader(movie);
 
         // Return -1 if movie doesn't exist or has no ratings
-        if (targetHeader == null || targetHeader.getnNode() == null) {
+        if (targetHeader.getnNode() == null) {
             return -1;
         }
         SparseMatrix.Node targetColNodes = targetHeader.getnNode();
