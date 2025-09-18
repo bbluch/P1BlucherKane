@@ -458,13 +458,19 @@ public class SparseMatrix {
             curr = curr.right;
         }
 
-        // If we found the node at the exact column
-        if (curr != null && curr.col == col) {
-            return curr;
+        if (curr == null) {
+            return null;
         }
-
-        // Node doesn't exist
-        return null;
+        return curr;
+        /*
+         * // If we found the node at the exact column
+         * if (curr != null && curr.col == col) {
+         * return curr;
+         * }
+         * 
+         * // Node doesn't exist
+         * return null;
+         */
     }
     // --- NEW METHOD END ---
 
