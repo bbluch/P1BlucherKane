@@ -679,4 +679,96 @@ public class MovieRaterTest extends TestCase {
 
         assertEquals(20, it.similarReviewer(10));
     }
+
+
+    /**
+     * Kills arithmetic operator mutants on the similarity calculation line.
+     * Sets up a simple calculation (totalDiff=6, shared=2) where the
+     * correct division result (3.0) must beat a decoy score (4.0).
+     * Any mutant operator (like 6*2=12, 6+2=8, or 6-2=4) will fail this test.
+     */
+    public void testSimilarReviewerArithmeticMutant() {
+        // Reviewer 1 (Target)
+        it.addReview(1, 10, 10);
+        it.addReview(1, 20, 6);
+
+        // Reviewer 2 (The correct answer)
+        it.addReview(2, 10, 7); // Diff = 3
+        it.addReview(2, 20, 3); // Diff = 3
+        // Correct Score = (3 + 3) / 2 = 3.0
+
+        // Reviewer 3 (Decoy Competitor)
+        it.addReview(3, 10, 6); // Diff = 4
+        // Correct Score = (4) / 1 = 4.0
+
+        // ----- ASSERTION -----
+        // Correct logic: R2's score (3.0) is < R3's score (4.0). Method MUST
+        // return 2.
+        assertEquals(2, it.similarReviewer(1));
+
+        // ----- MUTANT ANALYSIS -----
+        // If mutant is '*':
+        // R2 Score = 6 * 2 = 12.0
+        // R3 Score = 4 * 1 = 4.0
+        // Method returns 3. assertEquals(2, 3) fails. Mutant Killed.
+        //
+        // If mutant is '+':
+        // R2 Score = 6 + 2 = 8.0
+        // R3 Score = 4 + 1 = 5.0
+        // Method returns 3. assertEquals(2, 3) fails. Mutant Killed.
+        //
+        // If mutant is '-':
+        // R2 Score = 6 - 2 = 4.0
+        // R3 Score = 4 - 1 = 3.0
+        // Method returns 3. assertEquals(2, 3) fails. Mutant Killed.
+    }
+
+
+    /**
+     * Kills all arithmetic mutants on lines 20 and 26.
+     */
+    public void testSimilarMovieArithmeticAndAbsMutants() {
+        // Target Movie (M10)
+        it.addReview(1, 10, 2); // R1
+        it.addReview(2, 10, 10); // R2
+
+        // Competitor A (This MUST be the winner)
+        it.addReview(1, 20, 5); // R1: Diff = abs(2 - 5) = 3
+        it.addReview(2, 20, 8); // R2: Diff = abs(10 - 8) = 2
+        // Total Diff = 5. Shared = 2.
+        // FINAL SCORE = 5.0 / 2.0 = 2.5
+
+        // Competitor B (The Decoy)
+        it.addReview(1, 30, 10); // R1: Diff = abs(2 - 10) = 8
+        // Total Diff = 8. Shared = 1.
+        // FINAL SCORE = 8.0 / 1.0 = 8.0
+
+        // ASSERT: Score 2.5 (Movie 20) must beat score 8.0 (Movie 30).
+        assertEquals(20, it.similarMovie(10));
+
+        // --- MUTANT ANALYSIS ---
+        // 1. Remove Math.abs (L20):
+        // M20 Calc: TotalDiff = (2 - 5) + (10 - 8) = -3 + 2 = -1.0
+        // M20 Score = -1.0 / 2.0 = -0.5
+        // M30 Calc: TotalDiff = (2 - 10) = -8.0
+        // M30 Score = -8.0 / 1.0 = -8.0
+        // Now, -8.0 (M30) is < -0.5 (M20). The mutant returns 30.
+        // assertEquals(20, 30) fails. Mutant is KILLED.
+        //
+        // 2. Arithmetic mutant '/' -> '*' (L26):
+        // M20 Score = 5.0 * 2.0 = 10.0
+        // M30 Score = 8.0 * 1.0 = 8.0
+        // Now, 8.0 (M30) is < 10.0 (M20). The mutant returns 30.
+        // assertEquals(20, 30) fails. Mutant is KILLED.
+        //
+        // 3. Statement Deletion (L20):
+        // M20 Score: totalDiff = 0. Score = 0.0 / 2.0 = 0.0
+        // M30 Score: totalDiff = 0. Score = 0.0 / 1.0 = 0.0
+        // Method will tie-break and return 20 (lower index).
+        // assertEquals(20, 20) PASSES. This is an EQUIVALENT MUTANT.
+        // A program that thinks every movie is a 0.0 "perfect match" will
+        // still return the one with the lowest index, which is semantically
+        // correct (even if the calculation is wrong). You can ignore this
+        // mutant.
+    }
 }

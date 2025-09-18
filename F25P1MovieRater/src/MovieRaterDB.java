@@ -16,7 +16,7 @@ public class MovieRaterDB implements MovieRater {
      * Create a new MovieRaterDB object.
      */
     MovieRaterDB() {
-        matrix = new SparseMatrix(1000, 1000);
+        matrix = new SparseMatrix();
     }
 
 
@@ -27,7 +27,7 @@ public class MovieRaterDB implements MovieRater {
      * @return true on clear
      */
     public boolean clear() {
-        matrix = new SparseMatrix(1000, 1000);
+        matrix = new SparseMatrix();
         return true;
     }
 
@@ -160,9 +160,11 @@ public class MovieRaterDB implements MovieRater {
         SparseMatrix.HeaderNode targetHeader = matrix.findColHeader(movie);
 
         // Return -1 if movie doesn't exist or has no ratings
-        if (targetHeader.getnNode() == null) {
-            return -1;
-        }
+        /*
+         * if (targetHeader.getnNode() == null) {
+         * return -1;
+         * }
+         */
         SparseMatrix.Node targetColNodes = targetHeader.getnNode();
 
         int bestMovieId = -1;
@@ -172,8 +174,7 @@ public class MovieRaterDB implements MovieRater {
         SparseMatrix.HeaderNode otherHeader = matrix.getColHeaderList();
         while (otherHeader != null) {
             // Skip if it's the same movie or if the other movie has no ratings
-            if (otherHeader.getIndex() != movie && otherHeader
-                .getnNode() != null) {
+            if (otherHeader.getIndex() != movie) {
 
                 // 3. Calculate the similarity score
                 double score = calculateMovieSimilarity(targetColNodes,
@@ -215,10 +216,12 @@ public class MovieRaterDB implements MovieRater {
         // 1. Get the target reviewer's row data
         SparseMatrix.HeaderNode targetHeader = matrix.findRowHeader(reviewer);
 
-        // Return -1 if reviewer doesn't exist or has no ratings
-        if (targetHeader == null || targetHeader.getnNode() == null) {
-            return -1;
-        }
+        /*
+         * // Return -1 if reviewer doesn't exist or has no ratings
+         * if (targetHeader == null || targetHeader.getnNode() == null) {
+         * return -1;
+         * }
+         */
         SparseMatrix.Node targetRowNodes = targetHeader.getnNode();
 
         int bestReviewerId = -1;
@@ -228,8 +231,7 @@ public class MovieRaterDB implements MovieRater {
         SparseMatrix.HeaderNode otherHeader = matrix.getRowHeaderList();
         while (otherHeader != null) {
             // Skip if it's the same reviewer or has no ratings
-            if (otherHeader.getIndex() != reviewer && otherHeader
-                .getnNode() != null) {
+            if (otherHeader.getIndex() != reviewer) {
 
                 // 3. Calculate similarity score
                 double score = calculateReviewerSimilarity(targetRowNodes,

@@ -212,30 +212,16 @@ public class SparseMatrix {
      * @param numCols
      *            number of cols for header
      */
-    public SparseMatrix(int numRows, int numCols) {
-        this.numRows = numRows;
-        this.numCols = numCols;
-
+    public SparseMatrix() {
+        // We only create the starting (dummy) headers. Lists will grow on
+        // demand.
         rowHeader = new HeaderNode(0);
-        // using a temp node to implement amount of rows, while the row header
-        // stays at the start of the list
-        HeaderNode tempStart = rowHeader;
-        for (int i = 1; i < numRows; i++) {
-            HeaderNode newNode = new HeaderNode(i);
-            tempStart.setN(newNode);
-            tempStart = newNode;
-        }
-
         colHeader = new HeaderNode(0);
-        // using same temp node to implement amount of cols, while the col
-        // header stays at the start of the list
-        tempStart = colHeader;
-        for (int i = 1; i < numCols; i++) {
-            HeaderNode newNode = new HeaderNode(i);
-            tempStart.setN(newNode);
-            tempStart = newNode;
-        }
 
+        // numRows/numCols can optionally be used to track the highest index
+        // seen
+        this.numRows = 0;
+        this.numCols = 0;
     }
 
 
@@ -458,19 +444,13 @@ public class SparseMatrix {
             curr = curr.right;
         }
 
-        if (curr == null) {
-            return null;
+        // If we found the node at the exact column
+        if (curr != null && curr.col == col) {
+            return curr;
         }
-        return curr;
-        /*
-         * // If we found the node at the exact column
-         * if (curr != null && curr.col == col) {
-         * return curr;
-         * }
-         * 
-         * // Node doesn't exist
-         * return null;
-         */
+
+        // Node doesn't exist
+        return null;
     }
     // --- NEW METHOD END ---
 
@@ -502,9 +482,11 @@ public class SparseMatrix {
             // It IS the first node, so update the row header
             findRowHeader(row).setnNode(nodeToRemove.right);
         }
-        if (nodeToRemove.right != null) {
-            nodeToRemove.right.left = nodeToRemove.left;
-        }
+        /*
+         * if (nodeToRemove.right != null) {
+         * nodeToRemove.right.left = nodeToRemove.left;
+         * }
+         */
 
         // Unlink from vertical (column) list
         if (nodeToRemove.up != null) {
@@ -515,9 +497,11 @@ public class SparseMatrix {
             // It IS the first node, so update the column header
             findColHeader(col).setnNode(nodeToRemove.down);
         }
-        if (nodeToRemove.down != null) {
-            nodeToRemove.down.up = nodeToRemove.up;
-        }
+        /*
+         * if (nodeToRemove.down != null) {
+         * nodeToRemove.down.up = nodeToRemove.up;
+         * }
+         */
 
         return true;
     }
@@ -536,7 +520,7 @@ public class SparseMatrix {
         HeaderNode headRow = findRowHeader(row);
 
         // If row doesn't exist or already has no ratings, return false.
-        if (headRow == null || headRow.getnNode() == null) {
+        if (headRow.getnNode() == null) {
             return false;
         }
 
@@ -551,9 +535,11 @@ public class SparseMatrix {
                 findColHeader(curr.col).setnNode(curr.down);
             }
 
-            if (curr.down != null) {
-                curr.down.up = curr.up;
-            }
+            /*
+             * if (curr.down != null) {
+             * curr.down.up = curr.up;
+             * }
+             */
             curr = curr.right; // Move to the next node in the row
         }
 
@@ -576,7 +562,7 @@ public class SparseMatrix {
         HeaderNode headCol = findColHeader(col);
 
         // If col doesn't exist or already has no ratings, return false
-        if (headCol == null || headCol.getnNode() == null) {
+        if (headCol.getnNode() == null) {
             return false;
         }
 
@@ -591,9 +577,11 @@ public class SparseMatrix {
                 findRowHeader(curr.row).setnNode(curr.right);
             }
 
-            if (curr.right != null) {
-                curr.right.left = curr.left;
-            }
+            /*
+             * if (curr.right != null) {
+             * curr.right.left = curr.left;
+             * }
+             */
             curr = curr.down; // Move to the next node in the column
         }
 
@@ -610,12 +598,31 @@ public class SparseMatrix {
      * @return null or the header of the row you are searching for
      */
     public HeaderNode findRowHeader(int row) {
-        HeaderNode checker = rowHeader.getN();
+        // Start 'prev' at the dummy header (index 0)
+        HeaderNode prev = rowHeader;
+        // Start 'curr' at the first *real* header (index >= 1)
+        HeaderNode curr = rowHeader.n;
 
-        while (checker != null && checker.getIndex() != row) {
-            checker = checker.getN();
+        // Traverse the header list to find the correct sorted position
+        while (curr != null && curr.index < row) {
+            prev = curr;
+            curr = curr.n;
         }
-        return checker;
+
+        // Case 1: The header for this row already exists. Return it.
+        if (curr != null && curr.index == row) {
+            return curr;
+        }
+
+        // Case 2: Header not found. Create it and insert it between prev and
+        // curr.
+        HeaderNode newNode = new HeaderNode(row);
+        newNode.n = curr; // Links new node to the next one (or null if at end)
+        prev.n = newNode; // Links the previous node to our new one
+
+        this.numRows = row;
+
+        return newNode;
 
     }
 
@@ -629,12 +636,29 @@ public class SparseMatrix {
      *         for
      */
     public HeaderNode findColHeader(int col) {
-        HeaderNode checker = colHeader.getN();
+        // Logic is identical to findRowHeader, but on the column list.
+        HeaderNode prev = colHeader;
+        HeaderNode curr = colHeader.n;
 
-        while (checker != null && checker.getIndex() != col) {
-            checker = checker.getN();
+        // Traverse the header list to find the correct sorted position
+        while (curr != null && curr.index < col) {
+            prev = curr;
+            curr = curr.n;
         }
-        return checker;
+
+        // Case 1: The header for this col already exists. Return it.
+        if (curr != null && curr.index == col) {
+            return curr;
+        }
+
+        // Case 2: Header not found. Create and insert.
+        HeaderNode newNode = new HeaderNode(col);
+        newNode.n = curr;
+        prev.n = newNode;
+
+        this.numCols = col;
+
+        return newNode;
 
     }
 
