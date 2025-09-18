@@ -266,8 +266,8 @@ public class MovieRaterDB implements MovieRater {
      *            Node list for Reviewer X
      * @param rowY
      *            Node list for Reviewer Y
-     *            [cite_start]@return The similarity score, or -1.0 if no movies
-     *            are shared. [cite: 21]
+     * @return The similarity score, or -1.0 if no movies
+     *         are shared.
      */
     private double calculateReviewerSimilarity(
         SparseMatrix.Node rowX,
@@ -287,7 +287,7 @@ public class MovieRaterDB implements MovieRater {
             else {
                 // Shared movie found!
                 totalDiff += Math.abs(currX.getValue() - currY.getValue());
-                sharedCount++; //
+                sharedCount++;
                 currX = currX.getRight();
                 currY = currY.getRight();
             }

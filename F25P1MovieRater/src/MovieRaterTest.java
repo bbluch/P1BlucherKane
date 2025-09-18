@@ -771,4 +771,84 @@ public class MovieRaterTest extends TestCase {
         // correct (even if the calculation is wrong). You can ignore this
         // mutant.
     }
+
+
+    /**
+     * Kills all arithmetic mutants on lines 20 (abs, +=) and 26 (division).
+     */
+    public void testSimilarMovieMathMutants() {
+        // Target (M10): R1 rates 10, R2 rates 2.
+        it.addReview(1, 10, 10);
+        it.addReview(2, 10, 2);
+
+        // Winner (M20): R1 rates 8 (Diff=2), R2 rates 5 (Diff=3).
+        it.addReview(1, 20, 8);
+        it.addReview(2, 20, 5);
+        // Correct Calc: totalDiff = (2 + 3) = 5. shared = 2. Score = 2.5.
+
+        // Decoy (M30): R1 rates 7 (Diff=3), R2 rates 3 (Diff=1).
+        it.addReview(1, 30, 7);
+        it.addReview(2, 30, 3);
+        // Correct Calc: totalDiff = (3 + 1) = 4. shared = 2. Score = 2.0.
+
+        // *** This is backwards, 2.0 is better than 2.5. Swap Winner/Decoy. ***
+        // ASSERTION: Movie 30 (Score 2.0) must beat Movie 20 (Score 2.5).
+        assertEquals(30, it.similarMovie(10));
+
+        // --- MUTANT ANALYSIS ---
+        // 1. No Math.abs() Mutant:
+        // Winner (M30) Calc: (10-7) + (2-3) = 3 + (-1) = 2. Score = 1.0
+        // Decoy (M20) Calc: (10-8) + (2-5) = 2 + (-3) = -1. Score = -0.5
+        // Mutant sees -0.5 < 1.0, so it picks M20.
+        // Test: assertEquals(30, 20) -> FAILS. Mutant KILLED.
+        //
+        // 2. Division '/' -> '*' Mutant:
+        // Winner (M30) Calc: totalDiff = 4. Score = 4 * 2 = 8.0
+        // Decoy (M20) Calc: totalDiff = 5. Score = 5 * 2 = 10.0
+        // Mutant sees 8.0 < 10.0, so it picks M30.
+        // Test: assertEquals(30, 30) -> PASSES. This mutant is NOT killed.
+    }
+
+
+    /**
+     * Kills all 5 arithmetic mutants on lines 20 (abs, +=) and 26 (division).
+     */
+    public void testSimilarMovieArithmeticAndAbsMutants2() {
+        // Target (M10): R1 rates 2, R2 rates 10.
+        it.addReview(1, 10, 2);
+        it.addReview(2, 10, 10);
+
+        // Competitor A (This MUST be the winner)
+        it.addReview(1, 20, 5); // R1: Diff = abs(2 - 5) = 3
+        it.addReview(2, 20, 8); // R2: Diff = abs(10 - 8) = 2
+        // Correct Calc: totalDiff = (3 + 2) = 5. sharedCount = 2.
+        // FINAL SCORE = 5.0 / 2.0 = 2.5
+
+        // Competitor B (The Decoy)
+        it.addReview(1, 30, 5); // R1: Diff = abs(2 - 5) = 3
+        // Correct Calc: totalDiff = 3. sharedCount = 1.
+        // FINAL SCORE = 3.0 / 1.0 = 3.0
+
+        // ASSERT: Score 2.5 (Movie 20) MUST beat score 3.0 (Movie 30).
+        assertEquals(20, it.similarMovie(10));
+
+        // --- MUTANT ANALYSIS ---
+        // 1. No Math.abs():
+        // M20 Score: ((2-5) + (10-8)) / 2 = (-3 + 2) / 2 = -0.5
+        // M30 Score: (2-5) / 1 = -3.0
+        // Mutant sees -3.0 < -0.5 and picks M30.
+        // Test: assertEquals(20, 30) -> FAILS. Mutant KILLED.
+        //
+        // 2. Division '/' -> '*':
+        // M20 Score: 5.0 * 2.0 = 10.0
+        // M30 Score: 3.0 * 1.0 = 3.0
+        // Mutant sees 3.0 < 10.0 and picks M30.
+        // Test: assertEquals(20, 30) -> FAILS. Mutant KILLED.
+        //
+        // 3. '+=' -> '=' (only uses last diff):
+        // M20 totalDiff = 2 (from the R2 diff). Score = 2/2 = 1.0
+        // M30 totalDiff = 3. Score = 3/1 = 3.0
+        // Mutant sees 1.0 < 3.0 and picks M20.
+        // Test: assertEquals(20, 20) -> PASSES. This mutant is NOT killed.
+    }
 }
