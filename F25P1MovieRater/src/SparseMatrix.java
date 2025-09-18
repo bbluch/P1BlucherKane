@@ -478,11 +478,10 @@ public class SparseMatrix {
             // It IS the first node, so update the row header
             findRowHeader(row).setnNode(nodeToRemove.right);
         }
-        /*
-         * if (nodeToRemove.right != null) {
-         * nodeToRemove.right.left = nodeToRemove.left;
-         * }
-         */
+
+        if (nodeToRemove.right != null) {
+            nodeToRemove.right.left = nodeToRemove.left;
+        }
 
         // Unlink from vertical (column) list
         if (nodeToRemove.up != null) {
@@ -493,11 +492,9 @@ public class SparseMatrix {
             // It IS the first node, so update the column header
             findColHeader(col).setnNode(nodeToRemove.down);
         }
-        /*
-         * if (nodeToRemove.down != null) {
-         * nodeToRemove.down.up = nodeToRemove.up;
-         * }
-         */
+        if (nodeToRemove.down != null) {
+            nodeToRemove.down.up = nodeToRemove.up;
+        }
 
         return true;
     }
@@ -531,11 +528,10 @@ public class SparseMatrix {
                 findColHeader(curr.col).setnNode(curr.down);
             }
 
-            /*
-             * if (curr.down != null) {
-             * curr.down.up = curr.up;
-             * }
-             */
+            if (curr.down != null) {
+                curr.down.up = curr.up;
+            }
+
             curr = curr.right; // Move to the next node in the row
         }
 
@@ -573,11 +569,10 @@ public class SparseMatrix {
                 findRowHeader(curr.row).setnNode(curr.right);
             }
 
-            /*
-             * if (curr.right != null) {
-             * curr.right.left = curr.left;
-             * }
-             */
+            if (curr.right != null) {
+                curr.right.left = curr.left;
+            }
+
             curr = curr.down; // Move to the next node in the column
         }
 
