@@ -578,4 +578,59 @@ public class MovieRaterTest extends TestCase {
         assertEquals(20, it.similarMovie(10));
     }
 
+
+    /**
+     * This test comprehensively covers all "fail-fast" and "skip" branches
+     * in the similarMovie method to kill multiple mutants at once.
+     * It tests all 4 conditions required to hit lines 164 and 176.
+     */
+    public void testSimilarMovieAllFailAndSkipConditions() {
+        // --- Test Branch 1 (L164): targetHeader == null ---
+        // First, test on a totally empty database.
+        // This makes findColHeader(99) return null.
+        assertEquals(-1, it.similarMovie(99));
+
+        // Now add data, but ask for a movie that still doesn't exist.
+        it.addReview(1, 1, 5); // DB is no longer empty
+        it.addReview(2, 1, 8);
+        // This still executes targetHeader == null
+        assertEquals(-1, it.similarMovie(99));
+
+        // --- Test Branch 2 (L164): targetHeader.nNode == null ---
+        // Create a header for Movie 5, then delete all its ratings
+        // so its header exists, but its node list is null.
+        it.addReview(1, 5, 10);
+        it.deleteScore(1, 5); // Header for movie 5 now exists, but nNode is
+                              // null
+
+        // This now executes targetHeader != null, but targetHeader.nNode ==
+        // null
+        assertEquals(-1, it.similarMovie(5));
+
+        // --- Test Branches 3 & 4 (L176): self-skip and empty-competitor-skip
+        // ---
+        // We will create a database where the *only* other movies are:
+        // 1. The target movie itself (which must be skipped)
+        // 2. An "empty" movie (which also must be skipped)
+
+        it.clear();
+        it.addReview(1, 10, 8); // Our Target (Movie 10)
+        it.addReview(2, 10, 4);
+
+        it.addReview(1, 20, 1); // An Empty Competitor (Movie 20)
+        it.deleteScore(1, 20); // Movie 20 header now exists, but nNode is null
+
+        // When similarMovie(10) runs:
+        // 1. Loop finds Movie 10. (other.index == movie) -> SKIPS (Covers
+        // Branch 3)
+        // 2. Loop finds Movie 20. (other.nNode == null) -> SKIPS (Covers Branch
+        // 4)
+        // 3. The loop finishes having found no *valid* competitors.
+
+        // The method MUST return -1, as no suitable match exists.
+        assertEquals(-1, it.similarMovie(10));
+    }
+    
+    
+
 }
