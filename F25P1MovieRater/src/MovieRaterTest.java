@@ -630,7 +630,81 @@ public class MovieRaterTest extends TestCase {
         // The method MUST return -1, as no suitable match exists.
         assertEquals(-1, it.similarMovie(10));
     }
-    
-    
+
+
+    /**
+     * This test covers both branches of the fail-fast check on line 132.
+     * It tests a reviewer that doesn't exist (targetHeader == null) and
+     * a reviewer who exists but has no ratings (targetHeader.nNode == null).
+     */
+    public void testSimilarReviewerFailFastConditions() {
+        // --- Test Branch 1 (targetHeader == null) ---
+        // Test on an empty DB, then on a populated one with an unknown ID
+        assertEquals(-1, it.similarReviewer(99));
+        it.addReview(1, 1, 5); // Add some data
+        assertEquals(-1, it.similarReviewer(99)); // Still returns -1
+
+        // --- Test Branch 2 (targetHeader.nNode == null) ---
+        // Create a header for Reviewer 5, then delete their only rating.
+        it.addReview(5, 1, 10);
+        it.deleteScore(5, 1); // Header for 5 exists, but nNode is now null
+
+        // This executes the second part of the check on line 132
+        assertEquals(-1, it.similarReviewer(5));
+    }
+
+
+    /**
+     * This test covers both branches of the "skip" logic on line 144.
+     * It ensures the method skips self-comparison AND skips competitors
+     * who have no ratings, correctly identifying the only valid match.
+     */
+    public void testSimilarReviewerSkipsSelfAndEmptyCompetitors() {
+        // Target Reviewer (ID 10)
+        it.addReview(10, 1, 8);
+
+        // Empty Competitor (ID 5)
+        it.addReview(5, 5, 5);
+        it.deleteScore(5, 5); // Header 5 exists, but nNode == null
+
+        // Valid Competitor (ID 20)
+        it.addReview(20, 1, 5); // Score = abs(8-5)/1 = 3.0
+
+        // When similarReviewer(10) runs, the loop must:
+        // 1. Find R5. Hit (otherHeader.getNode() == null). SKIPS (Covers Branch
+        // 2 of L144)
+        // 2. Find R10. Hit (otherHeader.getIndex() == reviewer). SKIPS (Covers
+        // Branch 1 of L144)
+        // 3. Find R20. Calculate score. R20 becomes the best match.
+
+        assertEquals(20, it.similarReviewer(10));
+    }
+
+
+    /**
+     * Tests the "else if (score == lowestScore)" tie-breaker logic on line 160.
+     * This creates two competitors (R25 and R50) that have the
+     * *exact same* similarity score when compared to the target (R100).
+     * The logic must execute the "else if" block to pick the one
+     * with the lower index (R25).
+     */
+    public void testSimilarReviewerTieBreakerLogic() {
+        // Target Reviewer (ID 100)
+        it.addReview(100, 1, 10); // Rated 10
+
+        // Competitor 1 (ID 50) - Assume this is found first
+        it.addReview(50, 1, 5); // Score = abs(10-5) / 1 = 5.0
+
+        // Competitor 2 (ID 25) - Found later
+        it.addReview(25, 1, 5); // Score = abs(10-5) / 1 = 5.0 (A PERFECT TIE)
+
+        // The method must hit the "else if" branch when it compares R25.
+        // It sees (5.0 == 5.0), so it runs Math.min(bestReviewerId, 25).
+        // (Assuming 50 was found first: Math.min(50, 25) -> 25)
+        // (Assuming 25 was found first: Math.min(25, 50) -> 25)
+        // A mutant that deletes this block would incorrectly return 50
+        // (if it was found first).
+        assertEquals(25, it.similarReviewer(100));
+    }
 
 }
