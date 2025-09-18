@@ -7,7 +7,6 @@
  * @version Summer 2025
  *
  */
-// test comment
 public class MovieRaterDB implements MovieRater {
     private SparseMatrix matrix;
 
@@ -22,7 +21,7 @@ public class MovieRaterDB implements MovieRater {
 
     // ----------------------------------------------------------
     /**
-     * (Re)initialize the database
+     * (Re)initialize the database.
      * 
      * @return true on clear
      */
@@ -159,14 +158,10 @@ public class MovieRaterDB implements MovieRater {
         // 1. Get the target movie's column data
         SparseMatrix.HeaderNode targetHeader = matrix.findColHeader(movie);
 
-        // Return -1 if movie doesn't exist or has no ratings
-        /*
-         * if (targetHeader.getnNode() == null) {
-         * return -1;
-         * }
-         */
+        // stores the first matrix node
         SparseMatrix.Node targetColNodes = targetHeader.getnNode();
 
+        // initializes the variable to store most similar movie, -1 if invalid
         int bestMovieId = -1;
         double lowestScore = Double.MAX_VALUE;
 
@@ -182,7 +177,6 @@ public class MovieRaterDB implements MovieRater {
 
                 // 4. Track the best score (lowest positive score wins)
                 if (score != -1.0) { // Score of -1 means no shared reviewers
-                                     // [cite: 21]
                     if (score < lowestScore) {
                         lowestScore = score;
                         bestMovieId = otherHeader.getIndex();
@@ -216,14 +210,10 @@ public class MovieRaterDB implements MovieRater {
         // 1. Get the target reviewer's row data
         SparseMatrix.HeaderNode targetHeader = matrix.findRowHeader(reviewer);
 
-        /*
-         * // Return -1 if reviewer doesn't exist or has no ratings
-         * if (targetHeader == null || targetHeader.getnNode() == null) {
-         * return -1;
-         * }
-         */
+        // stores the first matrix node
         SparseMatrix.Node targetRowNodes = targetHeader.getnNode();
 
+        // variable to store similar movie index, -1 if no suitable match
         int bestReviewerId = -1;
         double lowestScore = Double.MAX_VALUE;
 
@@ -272,17 +262,27 @@ public class MovieRaterDB implements MovieRater {
     private double calculateReviewerSimilarity(
         SparseMatrix.Node rowX,
         SparseMatrix.Node rowY) {
+
+        // initialize variable for total difference between scores between
+        // reviewers
         double totalDiff = 0;
+
+        // initialize shared count of movies that reviewers have
         int sharedCount = 0;
+
+        // first node for row x stored
         SparseMatrix.Node currX = rowX;
+
+        // first node for row y stored
         SparseMatrix.Node currY = rowY;
 
+        // enter loop while each node is not null
         while (currX != null && currY != null) {
             if (currX.getCol() < currY.getCol()) {
-                currX = currX.getRight(); // Movie rated by X, not Y
+                currX = currX.getRight(); // entry rated by X, not Y
             }
             else if (currY.getCol() < currX.getCol()) {
-                currY = currY.getRight(); // Movie rated by Y, not X
+                currY = currY.getRight(); // entry rated by Y, not X
             }
             else {
                 // Shared movie found!
@@ -294,9 +294,10 @@ public class MovieRaterDB implements MovieRater {
         }
 
         if (sharedCount == 0) {
-            return -1.0; // Per spec, score is -1 if no movies are shared
+            return -1.0; // Per spec, score is -1 if no entries are shared
         }
-
+        // return the result, which is the difference of scores over shared
+        // number of entries
         return totalDiff / sharedCount;
     }
 
@@ -314,11 +315,19 @@ public class MovieRaterDB implements MovieRater {
     private double calculateMovieSimilarity(
         SparseMatrix.Node colA,
         SparseMatrix.Node colB) {
+
+        // initialize variable for total difference between scores between
+        // movies
         double totalDiff = 0;
+        
+        // initialize shared count of movies that reviewers have
         int sharedCount = 0;
+        
+        //first nodes for col A, col B stored
         SparseMatrix.Node currA = colA;
         SparseMatrix.Node currB = colB;
 
+        //enter loop while neither node is null
         while (currA != null && currB != null) {
             if (currA.getRow() < currB.getRow()) {
                 currA = currA.getDown(); // Reviewer rated A, not B
