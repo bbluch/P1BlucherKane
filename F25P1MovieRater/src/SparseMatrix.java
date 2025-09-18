@@ -7,8 +7,8 @@
  */
 public class SparseMatrix {
 
-    private int numRows; // number of rows in the matrix
-    private int numCols; // number of columns in the matrix
+    //private int numRows; // number of rows in the matrix
+    //private int numCols; // number of columns in the matrix
     private HeaderNode rowHeader; // start of the header list of the row headers
     private HeaderNode colHeader; // start of the header list of the column
                                   // headers
@@ -192,8 +192,8 @@ public class SparseMatrix {
         colHeader = new HeaderNode(0);
 
         // numRows/numCols can be used to track the highest index seen
-        this.numRows = 0;
-        this.numCols = 0;
+        //this.numRows = 0;
+        //this.numCols = 0;
     }
 
 
@@ -546,7 +546,7 @@ public class SparseMatrix {
         newNode.n = curr; // Links new node to the next one (or null if at end)
         prev.n = newNode; // Links the previous node to our new one
 
-        this.numRows = row;
+        //this.numRows = row;
 
         return newNode;
 
@@ -581,7 +581,7 @@ public class SparseMatrix {
         newNode.n = curr;
         prev.n = newNode;
 
-        this.numCols = col;
+        //this.numCols = col;
 
         return newNode;
 
